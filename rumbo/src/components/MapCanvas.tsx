@@ -4,154 +4,135 @@ import L from 'leaflet';
 import { Mode } from '../types';
 import { MODES } from '../constants';
 
-// Fix for default marker icons in Leaflet with React
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41]
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-interface MapCanvasProps {
+/** Default: Santiago centro */
+export const DEFAULT_MAP_CENTER: [number, number] = [-33.4489, -70.6693];
+
+export interface MapCanvasProps {
   activeMode: Mode | null;
+  /** [lat, lng][] from routing service */
+  routePath?: [number, number][] | null;
+  /** Map center when idle or fallback */
+  userCenter?: [number, number];
 }
 
-// Helper component to handle map view updates
-function MapController({ path }: { path: [number, number][] | null }) {
+function MapViewController({
+  path,
+  userCenter,
+}: {
+  path: [number, number][] | null;
+  userCenter: [number, number];
+}) {
   const map = useMap();
-  
+
   useEffect(() => {
-    if (path && path.length > 0) {
+    if (path && path.length >= 2) {
       const bounds = L.latLngBounds(path);
-      map.fitBounds(bounds, { padding: [50, 50] });
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16, animate: true });
+    } else {
+      map.setView(userCenter, 14, { animate: true });
     }
-  }, [path, map]);
+  }, [path, userCenter, map]);
 
   return null;
 }
 
-export default function MapCanvas({ activeMode }: MapCanvasProps) {
-  const activeConfig = useMemo(() => 
-    activeMode ? MODES.find(m => m.id === activeMode) : null
-  , [activeMode]);
+export default function MapCanvas({
+  activeMode,
+  routePath = null,
+  userCenter = DEFAULT_MAP_CENTER,
+}: MapCanvasProps) {
+  const activeConfig = useMemo(
+    () => (activeMode ? MODES.find((m) => m.id === activeMode) : null),
+    [activeMode],
+  );
 
-  // Lo Barnechea Center
-  const center: [number, number] = [-33.35, -70.51];
-
-  // Mode-specific routes following actual street patterns in Lo Barnechea
-  const routes: Record<Mode, [number, number][]> = {
-    carpool: [
-      [-33.364, -70.548], // Av. Las Condes
-      [-33.358, -70.535], // Av. La Dehesa
-      [-33.352, -70.515], // Av. La Dehesa
-      [-33.345, -70.505], // Av. La Dehesa
-      [-33.338, -70.495]  // Towards El Huinganal
-    ],
-    walk: [
-      [-33.352, -70.512], // Near Portal La Dehesa
-      [-33.350, -70.510],
-      [-33.348, -70.508],
-      [-33.346, -70.506]
-    ],
-    bus: [
-      [-33.380, -70.510], // Av. Jose Alcalde Delano
-      [-33.365, -70.510],
-      [-33.350, -70.510], // Av. La Dehesa
-      [-33.340, -70.520]
-    ],
-    bike: [
-      [-33.365, -70.540], // Near Mapocho River
-      [-33.360, -70.525],
-      [-33.358, -70.510],
-      [-33.355, -70.490]
-    ],
-  };
-
-  const activePath = activeMode ? routes[activeMode] : null;
+  const validPath =
+    routePath && routePath.length >= 2 ? routePath : null;
 
   return (
-    <div className="absolute inset-0 bg-[#e8f5e9] z-0">
-      <MapContainer 
-        center={center} 
-        zoom={13} 
+    <div className="absolute inset-0 z-0 bg-[#f0f2f4]">
+      <MapContainer
+        center={userCenter}
+        zoom={13}
         zoomControl={false}
         style={{ height: '100%', width: '100%' }}
+        className="touch-manipulation"
       >
         <TileLayer
-          attribution='&copy; Rumbo'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           className="map-tiles"
         />
-        
-        {activePath && activeConfig && (
+
+        {validPath && activeConfig && (
           <>
-            {/* Waze-style Route Shadow/Border */}
-            <Polyline 
-              positions={activePath} 
-              pathOptions={{ 
-                color: '#000000', 
-                weight: 12,
-                opacity: 0.1,
-                lineCap: 'round'
-              }} 
+            <Polyline
+              positions={validPath}
+              pathOptions={{
+                color: '#000000',
+                weight: 10,
+                opacity: 0.12,
+                lineCap: 'round',
+              }}
             />
-            
-            {/* Main Route Line */}
-            <Polyline 
-              positions={activePath} 
-              pathOptions={{ 
-                color: activeConfig.color, 
-                weight: 8,
+            <Polyline
+              positions={validPath}
+              pathOptions={{
+                color: activeConfig.color,
+                weight: 6,
                 opacity: 1,
                 lineCap: 'round',
-                lineJoin: 'round'
-              }} 
+                lineJoin: 'round',
+              }}
             />
-            
-            {/* Start Marker */}
-            <Marker 
-              position={activePath[0]} 
+            <Marker
+              position={validPath[0]}
               icon={L.divIcon({
                 className: 'custom-div-icon',
-                html: `<div style="background-color: #33b5e5; border: 4px solid white; width: 22px; height: 22px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"></div>`,
-                iconSize: [22, 22],
-                iconAnchor: [11, 11]
+                html: `<div style="background-color: #33b5e5; border: 3px solid white; width: 20px; height: 20px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2);"></div>`,
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
               })}
             />
-            
-            {/* End Marker */}
-            <Marker 
-              position={activePath[activePath.length - 1]} 
+            <Marker
+              position={validPath[validPath.length - 1]}
               icon={L.divIcon({
                 className: 'custom-div-icon',
-                html: `<div style="background-color: #ff5a5f; width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 3px solid white;">
-                        <div style="transform: rotate(45deg); color: white; font-weight: 900; font-size: 14px; margin-bottom: 2px;">B</div>
+                html: `<div style="background-color: #ff5a5f; width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 3px solid white;">
+                        <div style="transform: rotate(45deg); color: white; font-weight: 900; font-size: 13px; margin-bottom: 2px;">B</div>
                       </div>`,
-                iconSize: [32, 32],
-                iconAnchor: [16, 32]
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
               })}
             />
-
-            <MapController path={activePath} />
           </>
         )}
+
+        <MapViewController path={validPath} userCenter={userCenter} />
       </MapContainer>
 
       <style>{`
         .map-tiles {
-          filter: saturate(1.2) brightness(1.02);
+          filter: saturate(0.92) brightness(1.03) contrast(0.98);
         }
         .leaflet-container {
-          background: #e8f5e9 !important;
+          background: #eef1f4 !important;
+          font-family: inherit;
         }
-        /* Enhance green areas in the map tiles */
         .leaflet-tile-pane {
-          opacity: 0.95;
+          opacity: 0.97;
         }
       `}</style>
     </div>

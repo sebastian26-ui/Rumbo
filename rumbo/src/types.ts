@@ -13,13 +13,32 @@ export interface Stat {
   value: string;
 }
 
+export interface RoutedPath {
+  durationSeconds: number;
+  distanceMeters: number;
+  coordinates: [number, number][];
+}
+
 export interface ModeConfig {
   id: Mode;
-  color: string;
   title: string;
-  sub: string;
-  routes: Route[];
-  stats: Stat[];
   btnLabel: string;
   icon: string;
+  /** Mode accent used for map + UI (chips, panel). */
+  color: string;
+}
+
+/** Resolved trip for one transport mode (from /api/route). */
+export interface ModeRouteData {
+  primary: RoutedPath;
+  alternatives: RoutedPath[];
+}
+
+export interface Suggestion {
+  lat: number;
+  lng: number;
+  label: string;
+  primary: string;
+  secondary: string;
+  category?: string;
 }
