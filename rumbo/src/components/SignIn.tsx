@@ -1,23 +1,191 @@
-import React from 'react';
-import { signInWithGoogle } from '../firebase';
-import { LogIn, Navigation } from 'lucide-react';
+import React, { useState } from 'react';
+import { signInWithGoogle, signUpWithEmail, signInWithEmail } from '../firebase';
+import { LogIn, Navigation, ArrowLeft } from 'lucide-react';
+import disposableDomains from 'disposable-email-domains';
+
+const DISPOSABLE = new Set<string>(disposableDomains as string[]);
+
+function isDisposableEmail(email: string): boolean {
+  const at = email.lastIndexOf('@');
+  if (at < 0) return false;
+  return DISPOSABLE.has(email.slice(at + 1).toLowerCase());
+}
 
 interface SignInProps {
   onGuestAccess: () => void;
 }
 
+type View = 'landing' | 'signup' | 'signin';
+
 export default function SignIn({ onGuestAccess }: SignInProps) {
+  const [view, setView] = useState<View>('landing');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [city, setCity] = useState('Santiago');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedEmail = email.trim().toLowerCase();
+    if (!name.trim() || !trimmedEmail || password.length < 8) {
+      setError('Please enter your name, a valid email, and a password (8+ characters).');
+      return;
+    }
+    if (isDisposableEmail(trimmedEmail)) {
+      setError('Please use a real, non-disposable email address.');
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    try {
+      await signUpWithEmail(trimmedEmail, password, name.trim());
+      // Onboarding (provider selection) is handled by App after auth state changes.
+    } catch (err: any) {
+      setError(err?.message ?? 'Could not create your account.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+    try {
+      await signInWithEmail(email.trim(), password);
+    } catch (err: any) {
+      setError(err?.message ?? 'Could not sign you in.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (view === 'signup' || view === 'signin') {
+    const isSignUp = view === 'signup';
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center p-6 font-sans">
+        <div className="max-w-md w-full">
+          <button
+            onClick={() => { setView('landing'); setError(null); }}
+            className="flex items-center gap-2 text-gray-500 font-bold mb-8 hover:text-gray-900"
+          >
+            <ArrowLeft size={18} /> Back
+          </button>
+
+          <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">
+            {isSignUp ? 'Create your account' : 'Welcome back'}
+          </h1>
+          <p className="text-gray-500 mb-8 font-medium">
+            {isSignUp
+              ? 'A few quick details and you’re in.'
+              : 'Sign in to your Rumbo account.'}
+          </p>
+
+          <form onSubmit={isSignUp ? handleSignUp : handleSignIn} className="space-y-4">
+            {isSignUp && (
+              <>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Name</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your full name"
+                    className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none font-medium"
+                    autoComplete="name"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">City</label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="Santiago"
+                    className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none font-medium"
+                  />
+                </div>
+              </>
+            )}
+            <div>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none font-medium"
+                autoComplete="email"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none font-medium"
+                autoComplete={isSignUp ? 'new-password' : 'current-password'}
+              />
+            </div>
+
+            {error && (
+              <div className="text-sm text-red-600 font-medium bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full py-4 px-6 bg-blue-600 text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:bg-blue-700 transition-all active:scale-95 shadow-xl shadow-blue-200 disabled:opacity-60"
+            >
+              {submitting ? 'Please wait…' : isSignUp ? 'Create account' : 'Sign in'}
+            </button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-gray-500 font-medium">
+            {isSignUp ? (
+              <>Already have an account?{' '}
+                <button onClick={() => { setView('signin'); setError(null); }} className="text-blue-600 font-bold">Sign in</button>
+              </>
+            ) : (
+              <>New to Rumbo?{' '}
+                <button onClick={() => { setView('signup'); setError(null); }} className="text-blue-600 font-bold">Create an account</button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6 font-sans">
       <div className="max-w-md w-full text-center">
         <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-blue-200 animate-bounce-slow">
           <Navigation size={40} className="text-white" />
         </div>
-        
+
         <h1 className="text-4xl font-black text-gray-900 mb-3 tracking-tight">Rumbo</h1>
         <p className="text-gray-500 text-lg mb-12 font-medium">Smart mobility for your city</p>
-        
-        <div className="space-y-4">
+
+        <div className="space-y-3">
+          <button
+            onClick={() => setView('signup')}
+            className="w-full py-4 px-6 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all active:scale-95 shadow-xl shadow-blue-200"
+          >
+            Create an account
+          </button>
+          <button
+            onClick={() => setView('signin')}
+            className="w-full py-4 px-6 bg-white text-gray-900 font-bold rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95"
+          >
+            I already have an account
+          </button>
           <button
             onClick={() => signInWithGoogle()}
             className="w-full py-4 px-6 bg-gray-900 text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-all active:scale-95 shadow-xl"
@@ -25,7 +193,7 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
             <LogIn size={20} />
             Continue with Google
           </button>
-          
+
           <button
             onClick={onGuestAccess}
             className="w-full py-4 px-6 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-95"
@@ -33,7 +201,7 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
             Try as Guest
           </button>
         </div>
-        
+
         <div className="mt-16 pt-8 border-t border-gray-100">
           <div className="flex justify-center gap-8">
             <div className="text-center">

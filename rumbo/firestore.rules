@@ -9,6 +9,12 @@ service cloud.firestore {
     }
     match /users/{userId} {
       allow read, write: if isOwner(userId);
+
+      // Recursive: covers /users/{uid}/settings/providers and any future
+      // per-user subcollections.
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
     }
   }
 }

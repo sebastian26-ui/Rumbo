@@ -1,0 +1,2023 @@
+{
+  "_meta": {
+    "feature": "Rumbo risk badge — comuna-level reported-incident tiers",
+    "source": "Centro de Estudios y Análisis del Delito (CEAD), Subsecretaría de Prevención del Delito (Ministerio de Seguridad Pública), Chile",
+    "sourceUrl": "https://cead.minsegpublica.gob.cl/estadisticas-delictuales/",
+    "indicator": "Delitos de Mayor Connotación Social (DMCS) — casos policiales",
+    "dmcsCategories": [
+      "Homicidios",
+      "Violaciones",
+      "Robos con violencia o intimidación",
+      "Robo violento de vehículo motorizado",
+      "Robo por sorpresa",
+      "Robo en lugar habitado",
+      "Robos en lugar no habitado",
+      "Robo de vehículo motorizado",
+      "Robo de objetos de o desde vehículo",
+      "Otros robos con fuerza en las cosas",
+      "Hurtos",
+      "Lesiones leves",
+      "Lesiones menos graves",
+      "Lesiones graves o gravísimas"
+    ],
+    "denominator": "Proyecciones de población INE (Censo) por comuna",
+    "methodology": "tasa = casos policiales DMCS / población proyectada × 100.000 habitantes",
+    "period": "Año calendario 2024 (último año completo; CEAD publica hasta 2025-06)",
+    "updateCadence": "trimestral (refresco manual del dataset)",
+    "geographicLevel": "comuna (Región Metropolitana, 52 comunas)",
+    "lastBuilt": "2026-05-18",
+    "tierThresholdsPer100k": {
+      "low": "<= 1890",
+      "moderate": "<= 2261",
+      "elevated": "<= 2890",
+      "high": "> 2890"
+    },
+    "tierBasis": "Cuartiles de la tasa entre las 52 comunas de la Región Metropolitana (encuadre relativo y neutral)",
+    "caveats": [
+      "Datos a nivel comuna y anuales — no representan calles, barrios ni incidentes individuales.",
+      "La tasa usa población residente como denominador. Comunas con alta población flotante diurna (p. ej. Providencia, Santiago Centro) presentan tasas más altas porque los incidentes a no residentes no se reflejan en el denominador.",
+      "Refleja incidentes reportados, no la totalidad de los hechos."
+    ],
+    "profileBasis": "Participación de delitos violentos (homicidio, violación, robo con violencia, robo violento de vehículo, lesiones graves) sobre el total DMCS de la comuna: violento ≥30%, oportunista ≤18%, mixto entre ambos.",
+    "floatingPopulationFlag": "Marca editorial de Rumbo (NO de CEAD) para comunas con muy alta población flotante diurna —principales polos de empleo, comercio y transporte de la Región Metropolitana (Santiago Centro, Providencia, Las Condes, Estación Central)— donde la tasa por población residente sobreestima el riesgo para quien transita. No modifica la cifra oficial; ajusta la presentación.",
+    "categoryCountsNote": "categoryCounts = casos policiales DMCS 2024 por tipo, para agregación honesta a nivel ruta."
+  },
+  "comunas": {
+    "13101": {
+      "comuna": "Santiago",
+      "cut": 13101,
+      "ratePer100k": 5781.0,
+      "tier": "high",
+      "profile": "mixed",
+      "floatingPopulation": true,
+      "topCategories": [
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 28
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 25
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 20
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 28,
+        "Violaciones": 137,
+        "Robos con violencia o intimidación": 6198,
+        "Robo violento de vehículo motorizado": 279,
+        "Robo por sorpresa": 8902,
+        "Robo en lugar habitado": 403,
+        "Robos en lugar no habitado": 1231,
+        "Robo de vehículo motorizado": 1047,
+        "Robo de objetos de o desde vehículo": 2728,
+        "Otros robos con fuerza en las cosas": 473,
+        "Hurtos": 7763,
+        "Lesiones leves": 1870,
+        "Lesiones menos graves": 166,
+        "Lesiones graves o gravísimas": 246
+      }
+    },
+    "13102": {
+      "comuna": "Cerrillos",
+      "cut": 13102,
+      "ratePer100k": 3911.0,
+      "tier": "high",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 22
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 19
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 6,
+        "Violaciones": 22,
+        "Robos con violencia o intimidación": 768,
+        "Robo violento de vehículo motorizado": 264,
+        "Robo por sorpresa": 344,
+        "Robo en lugar habitado": 158,
+        "Robos en lugar no habitado": 194,
+        "Robo de vehículo motorizado": 253,
+        "Robo de objetos de o desde vehículo": 419,
+        "Otros robos con fuerza en las cosas": 57,
+        "Hurtos": 675,
+        "Lesiones leves": 277,
+        "Lesiones menos graves": 53,
+        "Lesiones graves o gravísimas": 37
+      }
+    },
+    "13103": {
+      "comuna": "Cerro Navia",
+      "cut": 13103,
+      "ratePer100k": 2263.8,
+      "tier": "elevated",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 29
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 17
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 11
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 15,
+        "Violaciones": 42,
+        "Robos con violencia o intimidación": 908,
+        "Robo violento de vehículo motorizado": 155,
+        "Robo por sorpresa": 232,
+        "Robo en lugar habitado": 153,
+        "Robos en lugar no habitado": 186,
+        "Robo de vehículo motorizado": 283,
+        "Robo de objetos de o desde vehículo": 93,
+        "Otros robos con fuerza en las cosas": 105,
+        "Hurtos": 354,
+        "Lesiones leves": 523,
+        "Lesiones menos graves": 54,
+        "Lesiones graves o gravísimas": 58
+      }
+    },
+    "13104": {
+      "comuna": "Conchalí",
+      "cut": 13104,
+      "ratePer100k": 2511.8,
+      "tier": "elevated",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 27
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 13
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 7,
+        "Violaciones": 32,
+        "Robos con violencia o intimidación": 912,
+        "Robo violento de vehículo motorizado": 149,
+        "Robo por sorpresa": 282,
+        "Robo en lugar habitado": 199,
+        "Robos en lugar no habitado": 190,
+        "Robo de vehículo motorizado": 262,
+        "Robo de objetos de o desde vehículo": 449,
+        "Otros robos con fuerza en las cosas": 57,
+        "Hurtos": 396,
+        "Lesiones leves": 438,
+        "Lesiones menos graves": 29,
+        "Lesiones graves o gravísimas": 31
+      }
+    },
+    "13105": {
+      "comuna": "El Bosque",
+      "cut": 13105,
+      "ratePer100k": 2115.3,
+      "tier": "moderate",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 22
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 19
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 11
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 11,
+        "Violaciones": 24,
+        "Robos con violencia o intimidación": 778,
+        "Robo violento de vehículo motorizado": 180,
+        "Robo por sorpresa": 264,
+        "Robo en lugar habitado": 214,
+        "Robos en lugar no habitado": 144,
+        "Robo de vehículo motorizado": 347,
+        "Robo de objetos de o desde vehículo": 388,
+        "Otros robos con fuerza en las cosas": 36,
+        "Hurtos": 685,
+        "Lesiones leves": 403,
+        "Lesiones menos graves": 56,
+        "Lesiones graves o gravísimas": 63
+      }
+    },
+    "13106": {
+      "comuna": "Estación Central",
+      "cut": 13106,
+      "ratePer100k": 4490.7,
+      "tier": "high",
+      "profile": "mixed",
+      "floatingPopulation": true,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 31
+        },
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 24
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 21
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 18,
+        "Violaciones": 45,
+        "Robos con violencia o intimidación": 2050,
+        "Robo violento de vehículo motorizado": 194,
+        "Robo por sorpresa": 2379,
+        "Robo en lugar habitado": 210,
+        "Robos en lugar no habitado": 195,
+        "Robo de vehículo motorizado": 351,
+        "Robo de objetos de o desde vehículo": 528,
+        "Otros robos con fuerza en las cosas": 62,
+        "Hurtos": 3073,
+        "Lesiones leves": 707,
+        "Lesiones menos graves": 83,
+        "Lesiones graves o gravísimas": 70
+      }
+    },
+    "13107": {
+      "comuna": "Huechuraba",
+      "cut": 13107,
+      "ratePer100k": 2815.9,
+      "tier": "elevated",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 21
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 21
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 15
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 7,
+        "Violaciones": 17,
+        "Robos con violencia o intimidación": 515,
+        "Robo violento de vehículo motorizado": 140,
+        "Robo por sorpresa": 353,
+        "Robo en lugar habitado": 99,
+        "Robos en lugar no habitado": 158,
+        "Robo de vehículo motorizado": 177,
+        "Robo de objetos de o desde vehículo": 684,
+        "Otros robos con fuerza en las cosas": 133,
+        "Hurtos": 710,
+        "Lesiones leves": 268,
+        "Lesiones menos graves": 25,
+        "Lesiones graves o gravísimas": 46
+      }
+    },
+    "13108": {
+      "comuna": "Independencia",
+      "cut": 13108,
+      "ratePer100k": 2483.3,
+      "tier": "elevated",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 22
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 20
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 22,
+        "Violaciones": 34,
+        "Robos con violencia o intimidación": 750,
+        "Robo violento de vehículo motorizado": 67,
+        "Robo por sorpresa": 428,
+        "Robo en lugar habitado": 118,
+        "Robos en lugar no habitado": 207,
+        "Robo de vehículo motorizado": 291,
+        "Robo de objetos de o desde vehículo": 395,
+        "Otros robos con fuerza en las cosas": 63,
+        "Hurtos": 854,
+        "Lesiones leves": 456,
+        "Lesiones menos graves": 57,
+        "Lesiones graves o gravísimas": 73
+      }
+    },
+    "13109": {
+      "comuna": "La Cisterna",
+      "cut": 13109,
+      "ratePer100k": 4593.6,
+      "tier": "high",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 24
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 14
+        },
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 10,
+        "Violaciones": 26,
+        "Robos con violencia o intimidación": 1115,
+        "Robo violento de vehículo motorizado": 256,
+        "Robo por sorpresa": 586,
+        "Robo en lugar habitado": 207,
+        "Robos en lugar no habitado": 213,
+        "Robo de vehículo motorizado": 444,
+        "Robo de objetos de o desde vehículo": 561,
+        "Otros robos con fuerza en las cosas": 89,
+        "Hurtos": 643,
+        "Lesiones leves": 433,
+        "Lesiones menos graves": 40,
+        "Lesiones graves o gravísimas": 35
+      }
+    },
+    "13110": {
+      "comuna": "La Florida",
+      "cut": 13110,
+      "ratePer100k": 2651.4,
+      "tier": "elevated",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 23
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 18
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 15
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 9,
+        "Violaciones": 76,
+        "Robos con violencia o intimidación": 1892,
+        "Robo violento de vehículo motorizado": 459,
+        "Robo por sorpresa": 1244,
+        "Robo en lugar habitado": 618,
+        "Robos en lugar no habitado": 485,
+        "Robo de vehículo motorizado": 735,
+        "Robo de objetos de o desde vehículo": 1600,
+        "Otros robos con fuerza en las cosas": 158,
+        "Hurtos": 2502,
+        "Lesiones leves": 815,
+        "Lesiones menos graves": 118,
+        "Lesiones graves o gravísimas": 88
+      }
+    },
+    "13111": {
+      "comuna": "La Granja",
+      "cut": 13111,
+      "ratePer100k": 2569.5,
+      "tier": "elevated",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 26
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 12
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 6,
+        "Violaciones": 29,
+        "Robos con violencia o intimidación": 784,
+        "Robo violento de vehículo motorizado": 179,
+        "Robo por sorpresa": 335,
+        "Robo en lugar habitado": 169,
+        "Robos en lugar no habitado": 127,
+        "Robo de vehículo motorizado": 180,
+        "Robo de objetos de o desde vehículo": 329,
+        "Otros robos con fuerza en las cosas": 53,
+        "Hurtos": 378,
+        "Lesiones leves": 365,
+        "Lesiones menos graves": 86,
+        "Lesiones graves o gravísimas": 46
+      }
+    },
+    "13112": {
+      "comuna": "La Pintana",
+      "cut": 13112,
+      "ratePer100k": 2004.4,
+      "tier": "moderate",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 28
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 15
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 15
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 24,
+        "Violaciones": 48,
+        "Robos con violencia o intimidación": 1069,
+        "Robo violento de vehículo motorizado": 190,
+        "Robo por sorpresa": 238,
+        "Robo en lugar habitado": 218,
+        "Robos en lugar no habitado": 169,
+        "Robo de vehículo motorizado": 234,
+        "Robo de objetos de o desde vehículo": 201,
+        "Otros robos con fuerza en las cosas": 31,
+        "Hurtos": 554,
+        "Lesiones leves": 570,
+        "Lesiones menos graves": 131,
+        "Lesiones graves o gravísimas": 111
+      }
+    },
+    "13113": {
+      "comuna": "La Reina",
+      "cut": 13113,
+      "ratePer100k": 2757.7,
+      "tier": "elevated",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 31
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 16
+        },
+        {
+          "cat": "Robo en lugar habitado",
+          "pct": 9
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 1,
+        "Violaciones": 14,
+        "Robos con violencia o intimidación": 253,
+        "Robo violento de vehículo motorizado": 44,
+        "Robo por sorpresa": 162,
+        "Robo en lugar habitado": 253,
+        "Robos en lugar no habitado": 127,
+        "Robo de vehículo motorizado": 240,
+        "Robo de objetos de o desde vehículo": 447,
+        "Otros robos con fuerza en las cosas": 90,
+        "Hurtos": 861,
+        "Lesiones leves": 199,
+        "Lesiones menos graves": 20,
+        "Lesiones graves o gravísimas": 25
+      }
+    },
+    "13114": {
+      "comuna": "Las Condes",
+      "cut": 13114,
+      "ratePer100k": 1916.6,
+      "tier": "moderate",
+      "profile": "opportunistic",
+      "floatingPopulation": true,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 45
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 15
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 8
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 1,
+        "Violaciones": 34,
+        "Robos con violencia o intimidación": 368,
+        "Robo violento de vehículo motorizado": 43,
+        "Robo por sorpresa": 423,
+        "Robo en lugar habitado": 296,
+        "Robos en lugar no habitado": 299,
+        "Robo de vehículo motorizado": 365,
+        "Robo de objetos de o desde vehículo": 961,
+        "Otros robos con fuerza en las cosas": 203,
+        "Hurtos": 2968,
+        "Lesiones leves": 535,
+        "Lesiones menos graves": 38,
+        "Lesiones graves o gravísimas": 52
+      }
+    },
+    "13115": {
+      "comuna": "Lo Barnechea",
+      "cut": 13115,
+      "ratePer100k": 1228.5,
+      "tier": "low",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 34
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 15
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 0,
+        "Violaciones": 17,
+        "Robos con violencia o intimidación": 124,
+        "Robo violento de vehículo motorizado": 9,
+        "Robo por sorpresa": 53,
+        "Robo en lugar habitado": 134,
+        "Robos en lugar no habitado": 93,
+        "Robo de vehículo motorizado": 57,
+        "Robo de objetos de o desde vehículo": 236,
+        "Otros robos con fuerza en las cosas": 41,
+        "Hurtos": 552,
+        "Lesiones leves": 232,
+        "Lesiones menos graves": 22,
+        "Lesiones graves o gravísimas": 40
+      }
+    },
+    "13116": {
+      "comuna": "Lo Espejo",
+      "cut": 13116,
+      "ratePer100k": 2257.3,
+      "tier": "moderate",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 25
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 15
+        },
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 5,
+        "Violaciones": 17,
+        "Robos con violencia o intimidación": 559,
+        "Robo violento de vehículo motorizado": 141,
+        "Robo por sorpresa": 307,
+        "Robo en lugar habitado": 129,
+        "Robos en lugar no habitado": 93,
+        "Robo de vehículo motorizado": 129,
+        "Robo de objetos de o desde vehículo": 186,
+        "Otros robos con fuerza en las cosas": 23,
+        "Hurtos": 196,
+        "Lesiones leves": 352,
+        "Lesiones menos graves": 68,
+        "Lesiones graves o gravísimas": 68
+      }
+    },
+    "13117": {
+      "comuna": "Lo Prado",
+      "cut": 13117,
+      "ratePer100k": 2951.7,
+      "tier": "high",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 22
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 19
+        },
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 6,
+        "Violaciones": 24,
+        "Robos con violencia o intimidación": 654,
+        "Robo violento de vehículo motorizado": 207,
+        "Robo por sorpresa": 414,
+        "Robo en lugar habitado": 111,
+        "Robos en lugar no habitado": 105,
+        "Robo de vehículo motorizado": 216,
+        "Robo de objetos de o desde vehículo": 206,
+        "Otros robos con fuerza en las cosas": 46,
+        "Hurtos": 577,
+        "Lesiones leves": 349,
+        "Lesiones menos graves": 69,
+        "Lesiones graves o gravísimas": 29
+      }
+    },
+    "13118": {
+      "comuna": "Macul",
+      "cut": 13118,
+      "ratePer100k": 2971.9,
+      "tier": "high",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 19
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 18
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 17
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 7,
+        "Violaciones": 24,
+        "Robos con violencia o intimidación": 737,
+        "Robo violento de vehículo motorizado": 240,
+        "Robo por sorpresa": 534,
+        "Robo en lugar habitado": 205,
+        "Robos en lugar no habitado": 181,
+        "Robo de vehículo motorizado": 339,
+        "Robo de objetos de o desde vehículo": 708,
+        "Otros robos con fuerza en las cosas": 47,
+        "Hurtos": 776,
+        "Lesiones leves": 253,
+        "Lesiones menos graves": 28,
+        "Lesiones graves o gravísimas": 33
+      }
+    },
+    "13119": {
+      "comuna": "Maipú",
+      "cut": 13119,
+      "ratePer100k": 2027.6,
+      "tier": "moderate",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 24
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 16
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 19,
+        "Violaciones": 93,
+        "Robos con violencia o intimidación": 2848,
+        "Robo violento de vehículo motorizado": 788,
+        "Robo por sorpresa": 935,
+        "Robo en lugar habitado": 741,
+        "Robos en lugar no habitado": 690,
+        "Robo de vehículo motorizado": 865,
+        "Robo de objetos de o desde vehículo": 1467,
+        "Otros robos con fuerza en las cosas": 175,
+        "Hurtos": 1945,
+        "Lesiones leves": 1034,
+        "Lesiones menos graves": 148,
+        "Lesiones graves o gravísimas": 150
+      }
+    },
+    "13120": {
+      "comuna": "Ñuñoa",
+      "cut": 13120,
+      "ratePer100k": 3333.4,
+      "tier": "high",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 28
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 18
+        },
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 18
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 1,
+        "Violaciones": 31,
+        "Robos con violencia o intimidación": 1013,
+        "Robo violento de vehículo motorizado": 177,
+        "Robo por sorpresa": 1577,
+        "Robo en lugar habitado": 294,
+        "Robos en lugar no habitado": 383,
+        "Robo de vehículo motorizado": 607,
+        "Robo de objetos de o desde vehículo": 1597,
+        "Otros robos con fuerza en las cosas": 192,
+        "Hurtos": 2448,
+        "Lesiones leves": 500,
+        "Lesiones menos graves": 37,
+        "Lesiones graves o gravísimas": 40
+      }
+    },
+    "13121": {
+      "comuna": "Pedro Aguirre Cerda",
+      "cut": 13121,
+      "ratePer100k": 2483.2,
+      "tier": "elevated",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 25
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 13
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 8,
+        "Violaciones": 20,
+        "Robos con violencia o intimidación": 652,
+        "Robo violento de vehículo motorizado": 104,
+        "Robo por sorpresa": 287,
+        "Robo en lugar habitado": 154,
+        "Robos en lugar no habitado": 141,
+        "Robo de vehículo motorizado": 163,
+        "Robo de objetos de o desde vehículo": 289,
+        "Otros robos con fuerza en las cosas": 26,
+        "Hurtos": 349,
+        "Lesiones leves": 303,
+        "Lesiones menos graves": 54,
+        "Lesiones graves o gravísimas": 44
+      }
+    },
+    "13122": {
+      "comuna": "Peñalolén",
+      "cut": 13122,
+      "ratePer100k": 1681.1,
+      "tier": "low",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 17
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 16
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 5,
+        "Violaciones": 35,
+        "Robos con violencia o intimidación": 716,
+        "Robo violento de vehículo motorizado": 199,
+        "Robo por sorpresa": 354,
+        "Robo en lugar habitado": 350,
+        "Robos en lugar no habitado": 260,
+        "Robo de vehículo motorizado": 455,
+        "Robo de objetos de o desde vehículo": 621,
+        "Otros robos con fuerza en las cosas": 82,
+        "Hurtos": 778,
+        "Lesiones leves": 585,
+        "Lesiones menos graves": 81,
+        "Lesiones graves o gravísimas": 67
+      }
+    },
+    "13123": {
+      "comuna": "Providencia",
+      "cut": 13123,
+      "ratePer100k": 6630.1,
+      "tier": "high",
+      "profile": "opportunistic",
+      "floatingPopulation": true,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 41
+        },
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 15
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 4,
+        "Violaciones": 38,
+        "Robos con violencia o intimidación": 1265,
+        "Robo violento de vehículo motorizado": 66,
+        "Robo por sorpresa": 1681,
+        "Robo en lugar habitado": 172,
+        "Robos en lugar no habitado": 470,
+        "Robo de vehículo motorizado": 353,
+        "Robo de objetos de o desde vehículo": 1481,
+        "Otros robos con fuerza en las cosas": 317,
+        "Hurtos": 4415,
+        "Lesiones leves": 501,
+        "Lesiones menos graves": 29,
+        "Lesiones graves o gravísimas": 82
+      }
+    },
+    "13124": {
+      "comuna": "Pudahuel",
+      "cut": 13124,
+      "ratePer100k": 2832.2,
+      "tier": "elevated",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 20
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 20
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 14,
+        "Violaciones": 54,
+        "Robos con violencia o intimidación": 1513,
+        "Robo violento de vehículo motorizado": 608,
+        "Robo por sorpresa": 634,
+        "Robo en lugar habitado": 314,
+        "Robos en lugar no habitado": 460,
+        "Robo de vehículo motorizado": 381,
+        "Robo de objetos de o desde vehículo": 897,
+        "Otros robos con fuerza en las cosas": 114,
+        "Hurtos": 1469,
+        "Lesiones leves": 775,
+        "Lesiones menos graves": 96,
+        "Lesiones graves o gravísimas": 80
+      }
+    },
+    "13125": {
+      "comuna": "Quilicura",
+      "cut": 13125,
+      "ratePer100k": 2049.0,
+      "tier": "moderate",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 23
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 14
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 9,
+        "Violaciones": 56,
+        "Robos con violencia o intimidación": 1315,
+        "Robo violento de vehículo motorizado": 408,
+        "Robo por sorpresa": 369,
+        "Robo en lugar habitado": 240,
+        "Robos en lugar no habitado": 523,
+        "Robo de vehículo motorizado": 355,
+        "Robo de objetos de o desde vehículo": 795,
+        "Otros robos con fuerza en las cosas": 72,
+        "Hurtos": 749,
+        "Lesiones leves": 644,
+        "Lesiones menos graves": 55,
+        "Lesiones graves o gravísimas": 60
+      }
+    },
+    "13126": {
+      "comuna": "Quinta Normal",
+      "cut": 13126,
+      "ratePer100k": 3522.0,
+      "tier": "high",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 30
+        },
+        {
+          "cat": "Robo de vehículo motorizado",
+          "pct": 11
+        },
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 10
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 10,
+        "Violaciones": 38,
+        "Robos con violencia o intimidación": 1478,
+        "Robo violento de vehículo motorizado": 283,
+        "Robo por sorpresa": 513,
+        "Robo en lugar habitado": 144,
+        "Robos en lugar no habitado": 293,
+        "Robo de vehículo motorizado": 558,
+        "Robo de objetos de o desde vehículo": 512,
+        "Otros robos con fuerza en las cosas": 73,
+        "Hurtos": 484,
+        "Lesiones leves": 484,
+        "Lesiones menos graves": 89,
+        "Lesiones graves o gravísimas": 36
+      }
+    },
+    "13127": {
+      "comuna": "Recoleta",
+      "cut": 13127,
+      "ratePer100k": 3996.3,
+      "tier": "high",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 27
+        },
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 20
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 17
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 34,
+        "Violaciones": 49,
+        "Robos con violencia o intimidación": 2085,
+        "Robo violento de vehículo motorizado": 129,
+        "Robo por sorpresa": 1590,
+        "Robo en lugar habitado": 153,
+        "Robos en lugar no habitado": 347,
+        "Robo de vehículo motorizado": 329,
+        "Robo de objetos de o desde vehículo": 621,
+        "Otros robos con fuerza en las cosas": 235,
+        "Hurtos": 1316,
+        "Lesiones leves": 765,
+        "Lesiones menos graves": 116,
+        "Lesiones graves o gravísimas": 98
+      }
+    },
+    "13128": {
+      "comuna": "Renca",
+      "cut": 13128,
+      "ratePer100k": 2336.0,
+      "tier": "elevated",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 26
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 18
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 11,
+        "Violaciones": 32,
+        "Robos con violencia o intimidación": 1003,
+        "Robo violento de vehículo motorizado": 109,
+        "Robo por sorpresa": 338,
+        "Robo en lugar habitado": 160,
+        "Robos en lugar no habitado": 253,
+        "Robo de vehículo motorizado": 303,
+        "Robo de objetos de o desde vehículo": 160,
+        "Otros robos con fuerza en las cosas": 213,
+        "Hurtos": 461,
+        "Lesiones leves": 671,
+        "Lesiones menos graves": 45,
+        "Lesiones graves o gravísimas": 51
+      }
+    },
+    "13129": {
+      "comuna": "San Joaquín",
+      "cut": 13129,
+      "ratePer100k": 3249.7,
+      "tier": "high",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 22
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 16
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 15
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 11,
+        "Violaciones": 17,
+        "Robos con violencia o intimidación": 727,
+        "Robo violento de vehículo motorizado": 126,
+        "Robo por sorpresa": 486,
+        "Robo en lugar habitado": 170,
+        "Robos en lugar no habitado": 195,
+        "Robo de vehículo motorizado": 247,
+        "Robo de objetos de o desde vehículo": 528,
+        "Otros robos con fuerza en las cosas": 30,
+        "Hurtos": 488,
+        "Lesiones leves": 250,
+        "Lesiones menos graves": 43,
+        "Lesiones graves o gravísimas": 33
+      }
+    },
+    "13130": {
+      "comuna": "San Miguel",
+      "cut": 13130,
+      "ratePer100k": 4256.5,
+      "tier": "high",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robo por sorpresa",
+          "pct": 22
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 21
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 17
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 4,
+        "Violaciones": 31,
+        "Robos con violencia o intimidación": 1310,
+        "Robo violento de vehículo motorizado": 210,
+        "Robo por sorpresa": 1334,
+        "Robo en lugar habitado": 173,
+        "Robos en lugar no habitado": 286,
+        "Robo de vehículo motorizado": 517,
+        "Robo de objetos de o desde vehículo": 810,
+        "Otros robos con fuerza en las cosas": 77,
+        "Hurtos": 1039,
+        "Lesiones leves": 310,
+        "Lesiones menos graves": 51,
+        "Lesiones graves o gravísimas": 38
+      }
+    },
+    "13131": {
+      "comuna": "San Ramón",
+      "cut": 13131,
+      "ratePer100k": 2923.7,
+      "tier": "high",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 24
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 21
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 6,
+        "Violaciones": 20,
+        "Robos con violencia o intimidación": 578,
+        "Robo violento de vehículo motorizado": 119,
+        "Robo por sorpresa": 230,
+        "Robo en lugar habitado": 109,
+        "Robos en lugar no habitado": 88,
+        "Robo de vehículo motorizado": 151,
+        "Robo de objetos de o desde vehículo": 188,
+        "Otros robos con fuerza en las cosas": 34,
+        "Hurtos": 523,
+        "Lesiones leves": 302,
+        "Lesiones menos graves": 50,
+        "Lesiones graves o gravísimas": 49
+      }
+    },
+    "13132": {
+      "comuna": "Vitacura",
+      "cut": 13132,
+      "ratePer100k": 2046.4,
+      "tier": "moderate",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 31
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 20
+        },
+        {
+          "cat": "Robo de vehículo motorizado",
+          "pct": 9
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 0,
+        "Violaciones": 8,
+        "Robos con violencia o intimidación": 150,
+        "Robo violento de vehículo motorizado": 56,
+        "Robo por sorpresa": 94,
+        "Robo en lugar habitado": 110,
+        "Robos en lugar no habitado": 151,
+        "Robo de vehículo motorizado": 185,
+        "Robo de objetos de o desde vehículo": 392,
+        "Otros robos con fuerza en las cosas": 75,
+        "Hurtos": 615,
+        "Lesiones leves": 119,
+        "Lesiones menos graves": 11,
+        "Lesiones graves o gravísimas": 20
+      }
+    },
+    "13201": {
+      "comuna": "Puente Alto",
+      "cut": 13201,
+      "ratePer100k": 1852.8,
+      "tier": "low",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 21
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 18
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 38,
+        "Violaciones": 159,
+        "Robos con violencia o intimidación": 2539,
+        "Robo violento de vehículo motorizado": 729,
+        "Robo por sorpresa": 1126,
+        "Robo en lugar habitado": 774,
+        "Robos en lugar no habitado": 515,
+        "Robo de vehículo motorizado": 823,
+        "Robo de objetos de o desde vehículo": 1229,
+        "Otros robos con fuerza en las cosas": 199,
+        "Hurtos": 2213,
+        "Lesiones leves": 1602,
+        "Lesiones menos graves": 244,
+        "Lesiones graves o gravísimas": 185
+      }
+    },
+    "13202": {
+      "comuna": "Pirque",
+      "cut": 13202,
+      "ratePer100k": 1172.0,
+      "tier": "low",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 21
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 18
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 16
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 1,
+        "Violaciones": 6,
+        "Robos con violencia o intimidación": 34,
+        "Robo violento de vehículo motorizado": 9,
+        "Robo por sorpresa": 5,
+        "Robo en lugar habitado": 50,
+        "Robos en lugar no habitado": 43,
+        "Robo de vehículo motorizado": 5,
+        "Robo de objetos de o desde vehículo": 63,
+        "Otros robos con fuerza en las cosas": 6,
+        "Hurtos": 82,
+        "Lesiones leves": 68,
+        "Lesiones menos graves": 9,
+        "Lesiones graves o gravísimas": 6
+      }
+    },
+    "13203": {
+      "comuna": "San José de Maipo",
+      "cut": 13203,
+      "ratePer100k": 2879.2,
+      "tier": "elevated",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Lesiones leves",
+          "pct": 20
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 19
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 18
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 2,
+        "Violaciones": 7,
+        "Robos con violencia o intimidación": 12,
+        "Robo violento de vehículo motorizado": 7,
+        "Robo por sorpresa": 6,
+        "Robo en lugar habitado": 77,
+        "Robos en lugar no habitado": 30,
+        "Robo de vehículo motorizado": 48,
+        "Robo de objetos de o desde vehículo": 107,
+        "Otros robos con fuerza en las cosas": 19,
+        "Hurtos": 101,
+        "Lesiones leves": 112,
+        "Lesiones menos graves": 20,
+        "Lesiones graves o gravísimas": 14
+      }
+    },
+    "13301": {
+      "comuna": "Colina",
+      "cut": 13301,
+      "ratePer100k": 1866.5,
+      "tier": "low",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 18
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 16
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 16
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 14,
+        "Violaciones": 43,
+        "Robos con violencia o intimidación": 591,
+        "Robo violento de vehículo motorizado": 91,
+        "Robo por sorpresa": 108,
+        "Robo en lugar habitado": 266,
+        "Robos en lugar no habitado": 347,
+        "Robo de vehículo motorizado": 232,
+        "Robo de objetos de o desde vehículo": 669,
+        "Otros robos con fuerza en las cosas": 83,
+        "Hurtos": 575,
+        "Lesiones leves": 518,
+        "Lesiones menos graves": 76,
+        "Lesiones graves o gravísimas": 71
+      }
+    },
+    "13302": {
+      "comuna": "Lampa",
+      "cut": 13302,
+      "ratePer100k": 1897.5,
+      "tier": "moderate",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Lesiones leves",
+          "pct": 16
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 15
+        },
+        {
+          "cat": "Robos en lugar no habitado",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 7,
+        "Violaciones": 34,
+        "Robos con violencia o intimidación": 395,
+        "Robo violento de vehículo motorizado": 145,
+        "Robo por sorpresa": 65,
+        "Robo en lugar habitado": 298,
+        "Robos en lugar no habitado": 356,
+        "Robo de vehículo motorizado": 178,
+        "Robo de objetos de o desde vehículo": 345,
+        "Otros robos con fuerza en las cosas": 41,
+        "Hurtos": 266,
+        "Lesiones leves": 439,
+        "Lesiones menos graves": 96,
+        "Lesiones graves o gravísimas": 49
+      }
+    },
+    "13303": {
+      "comuna": "Tiltil",
+      "cut": 13303,
+      "ratePer100k": 2317.4,
+      "tier": "elevated",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos en lugar no habitado",
+          "pct": 26
+        },
+        {
+          "cat": "Robo en lugar habitado",
+          "pct": 16
+        },
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 1,
+        "Violaciones": 6,
+        "Robos con violencia o intimidación": 71,
+        "Robo violento de vehículo motorizado": 39,
+        "Robo por sorpresa": 7,
+        "Robo en lugar habitado": 83,
+        "Robos en lugar no habitado": 134,
+        "Robo de vehículo motorizado": 31,
+        "Robo de objetos de o desde vehículo": 20,
+        "Otros robos con fuerza en las cosas": 4,
+        "Hurtos": 43,
+        "Lesiones leves": 60,
+        "Lesiones menos graves": 13,
+        "Lesiones graves o gravísimas": 9
+      }
+    },
+    "13401": {
+      "comuna": "San Bernardo",
+      "cut": 13401,
+      "ratePer100k": 2723.7,
+      "tier": "elevated",
+      "profile": "violent",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 22
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 16
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 24,
+        "Violaciones": 81,
+        "Robos con violencia o intimidación": 2095,
+        "Robo violento de vehículo motorizado": 793,
+        "Robo por sorpresa": 571,
+        "Robo en lugar habitado": 374,
+        "Robos en lugar no habitado": 521,
+        "Robo de vehículo motorizado": 754,
+        "Robo de objetos de o desde vehículo": 1236,
+        "Otros robos con fuerza en las cosas": 97,
+        "Hurtos": 1539,
+        "Lesiones leves": 1152,
+        "Lesiones menos graves": 127,
+        "Lesiones graves o gravísimas": 132
+      }
+    },
+    "13402": {
+      "comuna": "Buin",
+      "cut": 13402,
+      "ratePer100k": 2136.8,
+      "tier": "moderate",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 18
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 14
+        },
+        {
+          "cat": "Robo en lugar habitado",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 5,
+        "Violaciones": 22,
+        "Robos con violencia o intimidación": 298,
+        "Robo violento de vehículo motorizado": 124,
+        "Robo por sorpresa": 98,
+        "Robo en lugar habitado": 302,
+        "Robos en lugar no habitado": 292,
+        "Robo de vehículo motorizado": 153,
+        "Robo de objetos de o desde vehículo": 291,
+        "Otros robos con fuerza en las cosas": 30,
+        "Hurtos": 459,
+        "Lesiones leves": 354,
+        "Lesiones menos graves": 64,
+        "Lesiones graves o gravísimas": 29
+      }
+    },
+    "13403": {
+      "comuna": "Calera de Tango",
+      "cut": 13403,
+      "ratePer100k": 2004.4,
+      "tier": "moderate",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Lesiones leves",
+          "pct": 20
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 16
+        },
+        {
+          "cat": "Robos en lugar no habitado",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 0,
+        "Violaciones": 4,
+        "Robos con violencia o intimidación": 70,
+        "Robo violento de vehículo motorizado": 31,
+        "Robo por sorpresa": 19,
+        "Robo en lugar habitado": 73,
+        "Robos en lugar no habitado": 74,
+        "Robo de vehículo motorizado": 25,
+        "Robo de objetos de o desde vehículo": 65,
+        "Otros robos con fuerza en las cosas": 6,
+        "Hurtos": 99,
+        "Lesiones leves": 123,
+        "Lesiones menos graves": 6,
+        "Lesiones graves o gravísimas": 12
+      }
+    },
+    "13404": {
+      "comuna": "Paine",
+      "cut": 13404,
+      "ratePer100k": 1732.4,
+      "tier": "low",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 17
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 16
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 4,
+        "Violaciones": 22,
+        "Robos con violencia o intimidación": 265,
+        "Robo violento de vehículo motorizado": 61,
+        "Robo por sorpresa": 50,
+        "Robo en lugar habitado": 179,
+        "Robos en lugar no habitado": 169,
+        "Robo de vehículo motorizado": 106,
+        "Robo de objetos de o desde vehículo": 112,
+        "Otros robos con fuerza en las cosas": 32,
+        "Hurtos": 208,
+        "Lesiones leves": 246,
+        "Lesiones menos graves": 59,
+        "Lesiones graves o gravísimas": 17
+      }
+    },
+    "13501": {
+      "comuna": "Melipilla",
+      "cut": 13501,
+      "ratePer100k": 2049.0,
+      "tier": "moderate",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 23
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 15
+        },
+        {
+          "cat": "Robos en lugar no habitado",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 11,
+        "Violaciones": 27,
+        "Robos con violencia o intimidación": 384,
+        "Robo violento de vehículo motorizado": 25,
+        "Robo por sorpresa": 129,
+        "Robo en lugar habitado": 373,
+        "Robos en lugar no habitado": 414,
+        "Robo de vehículo motorizado": 99,
+        "Robo de objetos de o desde vehículo": 183,
+        "Otros robos con fuerza en las cosas": 77,
+        "Hurtos": 702,
+        "Lesiones leves": 460,
+        "Lesiones menos graves": 114,
+        "Lesiones graves o gravísimas": 53
+      }
+    },
+    "13502": {
+      "comuna": "Alhué",
+      "cut": 13502,
+      "ratePer100k": 1171.1,
+      "tier": "low",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robo en lugar habitado",
+          "pct": 27
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 25
+        },
+        {
+          "cat": "Robos en lugar no habitado",
+          "pct": 20
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 0,
+        "Violaciones": 1,
+        "Robos con violencia o intimidación": 6,
+        "Robo violento de vehículo motorizado": 0,
+        "Robo por sorpresa": 0,
+        "Robo en lugar habitado": 25,
+        "Robos en lugar no habitado": 18,
+        "Robo de vehículo motorizado": 0,
+        "Robo de objetos de o desde vehículo": 2,
+        "Otros robos con fuerza en las cosas": 2,
+        "Hurtos": 13,
+        "Lesiones leves": 23,
+        "Lesiones menos graves": 1,
+        "Lesiones graves o gravísimas": 1
+      }
+    },
+    "13503": {
+      "comuna": "Curacaví",
+      "cut": 13503,
+      "ratePer100k": 2124.2,
+      "tier": "moderate",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Lesiones leves",
+          "pct": 24
+        },
+        {
+          "cat": "Robo en lugar habitado",
+          "pct": 16
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 16
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 1,
+        "Violaciones": 12,
+        "Robos con violencia o intimidación": 73,
+        "Robo violento de vehículo motorizado": 10,
+        "Robo por sorpresa": 17,
+        "Robo en lugar habitado": 134,
+        "Robos en lugar no habitado": 128,
+        "Robo de vehículo motorizado": 31,
+        "Robo de objetos de o desde vehículo": 50,
+        "Otros robos con fuerza en las cosas": 7,
+        "Hurtos": 132,
+        "Lesiones leves": 195,
+        "Lesiones menos graves": 15,
+        "Lesiones graves o gravísimas": 10
+      }
+    },
+    "13504": {
+      "comuna": "María Pinto",
+      "cut": 13504,
+      "ratePer100k": 1365.8,
+      "tier": "low",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos en lugar no habitado",
+          "pct": 29
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 20
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 17
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 1,
+        "Violaciones": 1,
+        "Robos con violencia o intimidación": 13,
+        "Robo violento de vehículo motorizado": 0,
+        "Robo por sorpresa": 5,
+        "Robo en lugar habitado": 24,
+        "Robos en lugar no habitado": 61,
+        "Robo de vehículo motorizado": 8,
+        "Robo de objetos de o desde vehículo": 6,
+        "Otros robos con fuerza en las cosas": 0,
+        "Hurtos": 36,
+        "Lesiones leves": 42,
+        "Lesiones menos graves": 14,
+        "Lesiones graves o gravísimas": 3
+      }
+    },
+    "13505": {
+      "comuna": "San Pedro",
+      "cut": 13505,
+      "ratePer100k": 1666.1,
+      "tier": "low",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos en lugar no habitado",
+          "pct": 34
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 20
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 14
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 0,
+        "Violaciones": 4,
+        "Robos con violencia o intimidación": 10,
+        "Robo violento de vehículo motorizado": 1,
+        "Robo por sorpresa": 2,
+        "Robo en lugar habitado": 25,
+        "Robos en lugar no habitado": 72,
+        "Robo de vehículo motorizado": 5,
+        "Robo de objetos de o desde vehículo": 7,
+        "Otros robos con fuerza en las cosas": 3,
+        "Hurtos": 30,
+        "Lesiones leves": 42,
+        "Lesiones menos graves": 4,
+        "Lesiones graves o gravísimas": 4
+      }
+    },
+    "13601": {
+      "comuna": "Talagante",
+      "cut": 13601,
+      "ratePer100k": 2094.4,
+      "tier": "moderate",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 23
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 14
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 12
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 11,
+        "Violaciones": 14,
+        "Robos con violencia o intimidación": 174,
+        "Robo violento de vehículo motorizado": 27,
+        "Robo por sorpresa": 72,
+        "Robo en lugar habitado": 186,
+        "Robos en lugar no habitado": 210,
+        "Robo de vehículo motorizado": 100,
+        "Robo de objetos de o desde vehículo": 246,
+        "Otros robos con fuerza en las cosas": 36,
+        "Hurtos": 412,
+        "Lesiones leves": 211,
+        "Lesiones menos graves": 54,
+        "Lesiones graves o gravísimas": 38
+      }
+    },
+    "13602": {
+      "comuna": "El Monte",
+      "cut": 13602,
+      "ratePer100k": 1340.2,
+      "tier": "low",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 23
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 14
+        },
+        {
+          "cat": "Robo en lugar habitado",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 4,
+        "Violaciones": 1,
+        "Robos con violencia o intimidación": 62,
+        "Robo violento de vehículo motorizado": 6,
+        "Robo por sorpresa": 22,
+        "Robo en lugar habitado": 72,
+        "Robos en lugar no habitado": 64,
+        "Robo de vehículo motorizado": 27,
+        "Robo de objetos de o desde vehículo": 43,
+        "Otros robos con fuerza en las cosas": 11,
+        "Hurtos": 131,
+        "Lesiones leves": 79,
+        "Lesiones menos graves": 27,
+        "Lesiones graves o gravísimas": 17
+      }
+    },
+    "13603": {
+      "comuna": "Isla de Maipo",
+      "cut": 13603,
+      "ratePer100k": 1318.6,
+      "tier": "low",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 18
+        },
+        {
+          "cat": "Robo en lugar habitado",
+          "pct": 17
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 17
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 0,
+        "Violaciones": 7,
+        "Robos con violencia o intimidación": 62,
+        "Robo violento de vehículo motorizado": 12,
+        "Robo por sorpresa": 19,
+        "Robo en lugar habitado": 96,
+        "Robos en lugar no habitado": 77,
+        "Robo de vehículo motorizado": 28,
+        "Robo de objetos de o desde vehículo": 17,
+        "Otros robos con fuerza en las cosas": 7,
+        "Hurtos": 102,
+        "Lesiones leves": 94,
+        "Lesiones menos graves": 26,
+        "Lesiones graves o gravísimas": 12
+      }
+    },
+    "13604": {
+      "comuna": "Padre Hurtado",
+      "cut": 13604,
+      "ratePer100k": 1609.9,
+      "tier": "low",
+      "profile": "mixed",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Robos con violencia o intimidación",
+          "pct": 17
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 16
+        },
+        {
+          "cat": "Hurtos",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 1,
+        "Violaciones": 18,
+        "Robos con violencia o intimidación": 221,
+        "Robo violento de vehículo motorizado": 47,
+        "Robo por sorpresa": 47,
+        "Robo en lugar habitado": 174,
+        "Robos en lugar no habitado": 105,
+        "Robo de vehículo motorizado": 125,
+        "Robo de objetos de o desde vehículo": 139,
+        "Otros robos con fuerza en las cosas": 11,
+        "Hurtos": 177,
+        "Lesiones leves": 216,
+        "Lesiones menos graves": 29,
+        "Lesiones graves o gravísimas": 6
+      }
+    },
+    "13605": {
+      "comuna": "Peñaflor",
+      "cut": 13605,
+      "ratePer100k": 1335.6,
+      "tier": "low",
+      "profile": "opportunistic",
+      "floatingPopulation": false,
+      "topCategories": [
+        {
+          "cat": "Hurtos",
+          "pct": 21
+        },
+        {
+          "cat": "Lesiones leves",
+          "pct": 15
+        },
+        {
+          "cat": "Robo de objetos de o desde vehículo",
+          "pct": 13
+        }
+      ],
+      "categoryCounts": {
+        "Homicidios": 3,
+        "Violaciones": 14,
+        "Robos con violencia o intimidación": 153,
+        "Robo violento de vehículo motorizado": 39,
+        "Robo por sorpresa": 42,
+        "Robo en lugar habitado": 144,
+        "Robos en lugar no habitado": 132,
+        "Robo de vehículo motorizado": 132,
+        "Robo de objetos de o desde vehículo": 179,
+        "Otros robos con fuerza en las cosas": 27,
+        "Hurtos": 302,
+        "Lesiones leves": 215,
+        "Lesiones menos graves": 30,
+        "Lesiones graves o gravísimas": 15
+      }
+    }
+  }
+}

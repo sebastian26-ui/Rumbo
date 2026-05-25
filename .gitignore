@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.DS_Store
+.env
+.env.local
+*.log
+
+# Editor / tooling
+.antigravitycli/
+.vscode/
+.idea/
+
+# GTFS pipeline — raw feed and generated SQLite DB are large and reproducible.
+rumbo/data/gtfs/
+rumbo/data/*.db
+rumbo/data/*.db-journal
+rumbo/data/*.db-wal
+rumbo/data/*.db-shm

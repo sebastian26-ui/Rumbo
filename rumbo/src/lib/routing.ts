@@ -7,11 +7,19 @@ export type RouteApiResponse = {
   alternatives: RoutedPath[];
 };
 
-export function modeToOsrmProfile(mode: Mode): 'driving' | 'foot' | 'bike' {
+export type RoutingProfile = 'car' | 'foot' | 'bike';
+
+/**
+ * Map a UI mode to a profile understood by /api/route.
+ * Transit is intentionally excluded — it's served by /api/transit-route,
+ * which returns a sequence of walk + transit legs (Metro + micro + …) and
+ * does not share a single road-network polyline with cars.
+ */
+export function modeToRoutingProfile(mode: Mode): RoutingProfile | null {
   if (mode === 'walk') return 'foot';
   if (mode === 'bike') return 'bike';
-  // carpool + bus: driving geometry (bus is a road-network stand-in until GTFS)
-  return 'driving';
+  if (mode === 'carpool') return 'car';
+  return null;
 }
 
 export function formatDuration(seconds: number): string {
@@ -68,20 +76,17 @@ export function buildStatsForMode(mode: Mode, path: RoutedPath, destLabel: strin
         { key: 'Calories', value: `${walkCalories(path.distanceMeters)} kcal` },
         { key: 'Steps', value: `${walkSteps(path.distanceMeters).toLocaleString()}` },
       ];
-    case 'bus': {
-      const adjusted = path.durationSeconds * 1.2;
-      return [
-        { key: 'Total Time', value: formatDuration(adjusted) },
-        { key: 'Fare', value: '~$700 CLP' },
-        { key: 'Distance', value: dist },
-      ];
-    }
     case 'bike':
       return [
         { key: 'Cycling Time', value: d },
         { key: 'CO₂ Saved', value: co2SavedKgCarAvoided(path.distanceMeters) },
         { key: 'Calories', value: `${bikeCalories(path.distanceMeters)} kcal` },
       ];
+    case 'transit':
+      // Transit stats are computed by /api/transit-route and rendered as a
+      // multi-leg breakdown (see TransitRouteResult). Returning [] here
+      // suppresses the generic three-stat row.
+      return [];
     default:
       return [
         { key: 'Travel Time', value: d },

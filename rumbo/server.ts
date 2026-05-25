@@ -1,16 +1,37 @@
 import "dotenv/config";
-import express from "express";
+import * as Sentry from "@sentry/node";
+// Initialize Sentry before any other imports/instrumentation. No-op if DSN unset.
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || "development",
+    tracesSampleRate: 0.1,
+  });
+}
+
+import express, { NextFunction, Request, Response } from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
+import fs from "node:fs";
 import { fileURLToPath } from "url";
-import { fetchUberEstimates, mergeEstimatesForUi } from "./server/uber";
+import helmet from "helmet";
+import cors from "cors";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
+import pinoHttp from "pino-http";
+import {
+  getRoutingProvider,
+  RoutingError,
+  RoutingProfile,
+} from "./server/routing";
+import { getTransitProvider, TransitError } from "./server/transit";
+import { getStopArrivals, isValidStopCode } from "./server/transit/redcl";
+import { logger } from "./server/logger";
+import { gtfsDbPath } from "./server/gtfs/db";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const OSRM_BASE =
-  process.env.OSRM_BASE_URL?.replace(/\/$/, "") ||
-  "https://router.project-osrm.org";
 const NOMINATIM_BASE =
   process.env.NOMINATIM_BASE_URL?.replace(/\/$/, "") ||
   "https://nominatim.openstreetmap.org";
@@ -19,15 +40,9 @@ const USER_AGENT =
   process.env.GEOCODING_USER_AGENT ||
   "Rumbo/1.0 (https://github.com; mobility app; contact: dev@localhost)";
 
-type OsrmProfile = "driving" | "foot" | "bike";
-
 interface LatLngBody {
   lat: number;
   lng: number;
-}
-
-function flipCoords(coords: number[][]): [number, number][] {
-  return coords.map(([lon, lat]) => [lat, lon] as [number, number]);
 }
 
 async function nominatimChileSearch(
@@ -62,63 +77,100 @@ async function nominatimChileSearch(
   };
 }
 
-function parseOsrmRoute(route: {
-  duration: number;
-  distance: number;
-  geometry: { type: string; coordinates: number[][] };
-}) {
-  const coords = route.geometry?.coordinates;
-  if (!coords?.length) return null;
-  return {
-    durationSeconds: route.duration,
-    distanceMeters: route.distance,
-    coordinates: flipCoords(coords),
-  };
+async function nominatimReverse(
+  lat: number,
+  lng: number,
+): Promise<{ label: string } | null> {
+  const params = new URLSearchParams({
+    lat: String(lat),
+    lon: String(lng),
+    format: "json",
+    zoom: "18",
+    addressdetails: "0",
+  });
+
+  const url = `${NOMINATIM_BASE}/reverse?${params.toString()}`;
+  const r = await fetch(url, {
+    headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
+    signal: AbortSignal.timeout(20_000),
+  });
+
+  if (!r.ok) return null;
+
+  const row = (await r.json()) as { display_name?: string } | null;
+  if (!row?.display_name) return null;
+
+  // Nominatim returns the full comma-separated chain; the first two parts
+  // (e.g. "123, Av. Apoquindo") read as a usable short address.
+  const short = row.display_name.split(",").slice(0, 2).join(",").trim();
+  return { label: short || row.display_name };
 }
 
-async function fetchOsrmRoute(
-  origin: LatLngBody,
-  dest: LatLngBody,
-  profile: OsrmProfile,
-  alternatives: boolean
-): Promise<{ primary: NonNullable<ReturnType<typeof parseOsrmRoute>>; alternatives: NonNullable<ReturnType<typeof parseOsrmRoute>>[] } | null> {
-  const a = `${origin.lng},${origin.lat}`;
-  const b = `${dest.lng},${dest.lat}`;
-  const altParam = alternatives && profile === "driving" ? "&alternatives=true" : "";
-  const url = `${OSRM_BASE}/route/v1/${profile}/${a};${b}?overview=full&geometries=geojson${altParam}`;
+const ALLOWED_ORIGINS = (process.env.CORS_ALLOWED_ORIGINS || "https://rumbo.cl,https://www.rumbo.cl")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 
-  const res = await fetch(url, { signal: AbortSignal.timeout(25_000) });
-  if (!res.ok) return null;
-  const data = (await res.json()) as {
-    code: string;
-    routes?: Array<{
-      duration: number;
-      distance: number;
-      geometry: { type: string; coordinates: number[][] };
-    }>;
-  };
+const standardLimitOpts = {
+  standardHeaders: "draft-7" as const,
+  legacyHeaders: false,
+};
 
-  if (data.code !== "Ok" || !data.routes?.length) return null;
-
-  const parsed = data.routes
-    .map((r) => parseOsrmRoute(r))
-    .filter((x): x is NonNullable<typeof x> => x !== null);
-
-  if (!parsed.length) return null;
-
-  return {
-    primary: parsed[0],
-    alternatives: parsed.slice(1),
-  };
-}
+const routeLimiter = rateLimit({ ...standardLimitOpts, windowMs: 60_000, max: 20, message: { error: "Rate limited" } });
+const routeAllLimiter = rateLimit({ ...standardLimitOpts, windowMs: 60_000, max: 10, message: { error: "Rate limited" } });
+const autocompleteLimiter = rateLimit({ ...standardLimitOpts, windowMs: 60_000, max: 60, message: { error: "Rate limited" } });
+const geocodeLimiter = rateLimit({ ...standardLimitOpts, windowMs: 60_000, max: 30, message: { error: "Rate limited" } });
+const arrivalsLimiter = rateLimit({ ...standardLimitOpts, windowMs: 60_000, max: 30, message: { error: "Rate limited" } });
+const globalLimiter = rateLimit({ ...standardLimitOpts, windowMs: 60_000, max: 240, message: { error: "Rate limited" } });
 
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 4000;
 
-  app.use(express.json());
+  // Behind Render/Cloud Run/Cloudflare we need to trust 1 proxy hop so the
+  // rate limiter keys on the real client IP, not the proxy's.
+  app.set("trust proxy", 1);
 
-  app.post("/api/autocomplete", async (req, res) => {
+  app.use(
+    helmet({
+      // CSP needs separate tuning for Leaflet tiles + Firebase; ship without
+      // CSP for v1 and revisit. All other security headers (HSTS, X-Frame,
+      // X-Content-Type) are still applied.
+      contentSecurityPolicy: false,
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
+  app.use(
+    cors({
+      origin: (origin, cb) => {
+        // Same-origin / curl / mobile webviews send no Origin header.
+        if (!origin) return cb(null, true);
+        if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+        return cb(new Error(`CORS: origin ${origin} not allowed`));
+      },
+      credentials: true,
+    }),
+  );
+  app.use(compression());
+  app.use(express.json({ limit: "10kb" }));
+  app.use(pinoHttp({ logger }));
+  app.use(globalLimiter);
+
+  app.get("/health", (_req, res) => {
+    let gtfsAgeDays: number | null = null;
+    try {
+      const dbPath = gtfsDbPath();
+      if (fs.existsSync(dbPath)) {
+        const stat = fs.statSync(dbPath);
+        gtfsAgeDays = Math.floor((Date.now() - stat.mtimeMs) / (1000 * 60 * 60 * 24));
+      }
+    } catch {
+      gtfsAgeDays = null;
+    }
+    res.json({ ok: true, gtfsAgeDays });
+  });
+
+  app.post("/api/autocomplete", autocompleteLimiter, async (req, res) => {
     const q = typeof req.body?.q === "string" ? req.body.q.trim() : "";
     const userLat = typeof req.body?.lat === "number" ? req.body.lat : -33.4489;
     const userLng = typeof req.body?.lng === "number" ? req.body.lng : -70.6693;
@@ -271,12 +323,12 @@ async function startServer() {
 
       res.json({ suggestions: suggestions.slice(0, 8) });
     } catch (e) {
-      console.error("autocomplete", e);
+      logger.error({ err: e }, "autocomplete");
       res.json({ suggestions: [] });
     }
   });
 
-  app.post("/api/geocode", async (req, res) => {
+  app.post("/api/geocode", geocodeLimiter, async (req, res) => {
     const q = typeof req.body?.q === "string" ? req.body.q.trim() : "";
     if (!q) {
       res.status(400).json({ error: "Missing query" });
@@ -291,15 +343,36 @@ async function startServer() {
       }
       res.json({ lat: hit.lat, lng: hit.lng, label: hit.label });
     } catch (e) {
-      console.error("geocode", e);
+      logger.error({ err: e }, "geocode");
       res.status(502).json({ error: "Geocoding failed" });
     }
   });
 
-  app.post("/api/route", async (req, res) => {
+  app.post("/api/reverse-geocode", geocodeLimiter, async (req, res) => {
+    const lat = typeof req.body?.lat === "number" ? req.body.lat : null;
+    const lng = typeof req.body?.lng === "number" ? req.body.lng : null;
+    if (lat == null || lng == null) {
+      res.status(400).json({ error: "lat and lng required" });
+      return;
+    }
+
+    try {
+      const hit = await nominatimReverse(lat, lng);
+      if (!hit) {
+        res.status(404).json({ error: "No address found" });
+        return;
+      }
+      res.json({ label: hit.label });
+    } catch (e) {
+      logger.error({ err: e }, "reverse-geocode");
+      res.status(502).json({ error: "Reverse geocoding failed" });
+    }
+  });
+
+  app.post("/api/route", routeLimiter, async (req, res) => {
     const origin = req.body?.origin as LatLngBody | undefined;
     const destination = req.body?.destination as LatLngBody | undefined;
-    const profile = req.body?.profile as OsrmProfile | undefined;
+    const profile = req.body?.profile as RoutingProfile | undefined;
     const alternatives = Boolean(req.body?.alternatives);
 
     if (
@@ -314,104 +387,195 @@ async function startServer() {
       return;
     }
 
-    const validProfiles: OsrmProfile[] = ["driving", "foot", "bike"];
+    const validProfiles: RoutingProfile[] = ["car", "foot", "bike"];
     if (!profile || !validProfiles.includes(profile)) {
-      res.status(400).json({ error: "profile must be driving, foot, or bike" });
+      res.status(400).json({ error: "profile must be car, foot, or bike" });
       return;
     }
 
     try {
-      const result = await fetchOsrmRoute(origin, destination, profile, alternatives);
-      if (!result) {
-        res.status(404).json({ error: "No route found for this mode" });
-        return;
-      }
+      const provider = getRoutingProvider();
+      const result = await provider.fetchRoute(origin, destination, profile, {
+        alternatives,
+      });
       res.json({
+        provider: provider.name,
         primary: result.primary,
         alternatives: result.alternatives,
       });
     } catch (e) {
-      console.error("route", e);
+      if (e instanceof RoutingError) {
+        res.status(e.status).json({ error: e.message });
+        return;
+      }
+      logger.error({ err: e }, "route");
       res.status(502).json({ error: "Routing service failed" });
     }
   });
 
-  app.post("/api/estimates", async (req, res) => {
-    const endAddress = typeof req.body?.end === "string" ? req.body.end.trim() : "";
-    const startLat = req.body?.startLat;
-    const startLng = req.body?.startLng;
+  app.post("/api/transit-route", routeLimiter, async (req, res) => {
+    const origin = req.body?.origin as LatLngBody | undefined;
+    const destination = req.body?.destination as LatLngBody | undefined;
 
-    if (!endAddress) {
-      res.status(400).json({ error: "Missing destination (end)" });
-      return;
-    }
-    if (typeof startLat !== "number" || typeof startLng !== "number") {
-      res.status(400).json({ error: "startLat and startLng (numbers) required — enable location in the browser" });
+    if (
+      !origin ||
+      !destination ||
+      typeof origin.lat !== "number" ||
+      typeof origin.lng !== "number" ||
+      typeof destination.lat !== "number" ||
+      typeof destination.lng !== "number"
+    ) {
+      res.status(400).json({ error: "origin and destination {lat,lng} required" });
       return;
     }
 
     try {
-      const dest = await nominatimChileSearch(endAddress);
-      if (!dest) {
-        res.status(404).json({
-          error: "Could not geocode destination in Chile search area",
-          estimates: [],
-        });
-        return;
-      }
-
-      const hasUber = Boolean(process.env.UBER_CLIENT_ID && process.env.UBER_CLIENT_SECRET);
-
-      if (hasUber) {
-        const { prices, times } = await fetchUberEstimates({
-          startLat,
-          startLng,
-          endLat: dest.lat,
-          endLng: dest.lng,
-        });
-        const estimates = mergeEstimatesForUi(prices, times);
-
-        res.json({
-          estimates,
-          bestPriceProvider: estimates[0]?.provider,
-          timestamp: new Date().toISOString(),
-          source: "uber",
-        });
-        return;
-      }
-
-      const mock = [
-        {
-          provider: "Uber",
-          type: "UberX (configure UBER_* secrets)",
-          price: 4500,
-          currency: "CLP",
-          eta: 3,
-          color: "#000000",
-        },
-        {
-          provider: "Cabify",
-          type: "Lite",
-          price: 4200,
-          currency: "CLP",
-          eta: 5,
-          color: "#7350FF",
-        },
-      ].sort((a, b) => a.price - b.price);
-
-      res.json({
-        estimates: mock,
-        bestPriceProvider: mock[0].provider,
-        timestamp: new Date().toISOString(),
-        source: "mock",
-        hint: "Set UBER_CLIENT_ID and UBER_CLIENT_SECRET for live Uber estimates.",
-      });
+      const provider = getTransitProvider();
+      const result = await provider.fetchTransitRoute(origin, destination);
+      // 200 with available=false is a real "no transit option" answer; only
+      // surface 503 when the provider itself failed.
+      res.status(200).json({ provider: provider.name, ...result });
     } catch (e) {
-      console.error("estimates", e);
-      const message = e instanceof Error ? e.message : "Uber or geocoding failed";
-      res.status(502).json({ error: message, estimates: [] });
+      if (e instanceof TransitError) {
+        res.status(e.status).json({ error: e.message });
+        return;
+      }
+      logger.error({ err: e }, "transit-route");
+      res.status(502).json({ error: "Transit routing service failed" });
     }
   });
+
+  app.post("/api/route-all", routeAllLimiter, async (req, res) => {
+    const origin = req.body?.origin as LatLngBody | undefined;
+    const destination = req.body?.destination as LatLngBody | undefined;
+
+    if (
+      !origin ||
+      !destination ||
+      typeof origin.lat !== "number" ||
+      typeof origin.lng !== "number" ||
+      typeof destination.lat !== "number" ||
+      typeof destination.lng !== "number"
+    ) {
+      res.status(400).json({ error: "origin and destination {lat,lng} required" });
+      return;
+    }
+
+    const profileFor = { carpool: "car", walk: "foot", bike: "bike" } as const;
+    const drivingPromises = (Object.entries(profileFor) as Array<
+      [keyof typeof profileFor, RoutingProfile]
+    >).map(async ([mode, profile]) => {
+      try {
+        const routing = getRoutingProvider();
+        const r = await routing.fetchRoute(origin, destination, profile, {
+          alternatives: false,
+        });
+        return {
+          kind: "route" as const,
+          mode,
+          primary: r.primary,
+          alternatives: r.alternatives,
+        };
+      } catch (e) {
+        const msg =
+          e instanceof RoutingError
+            ? e.message
+            : e instanceof Error
+              ? e.message
+              : "Routing failed";
+        return { kind: "error" as const, mode, error: msg };
+      }
+    });
+
+    const transitPromise = (async () => {
+      try {
+        const transit = getTransitProvider();
+        const result = await transit.fetchTransitRoute(origin, destination);
+        return { kind: "transit" as const, mode: "transit" as const, result };
+      } catch (e) {
+        const msg =
+          e instanceof TransitError
+            ? e.message
+            : e instanceof Error
+              ? e.message
+              : "Transit routing failed";
+        return {
+          kind: "error" as const,
+          mode: "transit" as const,
+          error: msg,
+        };
+      }
+    })();
+
+    let settled;
+    try {
+      settled = await Promise.all([...drivingPromises, transitPromise]);
+    } catch (e) {
+      logger.error({ err: e }, "route-all");
+      res.status(502).json({ error: "Comparison failed" });
+      return;
+    }
+    const byMode = Object.fromEntries(settled.map((s) => [s.mode, s])) as Record<
+      "carpool" | "walk" | "bike" | "transit",
+      (typeof settled)[number]
+    >;
+
+    res.json({
+      carpool: byMode.carpool,
+      walk: byMode.walk,
+      bike: byMode.bike,
+      transit: byMode.transit,
+    });
+  });
+
+  // Live bus arrivals for a paradero, sourced from red.cl's "¿Cuándo llega?"
+  // predictor. The route param is optional; when present we narrow the
+  // response to just that service. See server/transit/redcl.ts for the full
+  // honesty caveats about this data source.
+  app.get("/api/realtime/arrivals", arrivalsLimiter, async (req, res) => {
+    const stop = typeof req.query.stop === "string" ? req.query.stop.trim() : "";
+    const route =
+      typeof req.query.route === "string" ? req.query.route.trim() : "";
+
+    if (!isValidStopCode(stop)) {
+      res.status(400).json({
+        error: "stop must be a Santiago paradero code (e.g. PA433)",
+      });
+      return;
+    }
+
+    try {
+      const result = await getStopArrivals(stop);
+      const arrivals = route
+        ? result.arrivals.filter(
+            (a) => a.service.toLowerCase() === route.toLowerCase(),
+          )
+        : result.arrivals;
+
+      // If the upstream had live data overall but nothing for the requested
+      // route, surface that as no-predictions so the UI flips to "horario".
+      const effectiveStatus =
+        route && result.status === "live" && arrivals.length === 0
+          ? "no-predictions"
+          : result.status;
+
+      res.json({
+        stopCode: result.stopCode,
+        status: effectiveStatus,
+        arrivals,
+        ageMs: result.ageMs,
+        cached: result.cached,
+        reason: result.reason,
+      });
+    } catch (e) {
+      logger.error({ err: e }, "realtime/arrivals");
+      res.status(502).json({ error: "Live arrivals unavailable" });
+    }
+  });
+
+  // Provider price comparison is computed CLIENT-SIDE from public Santiago
+  // tariffs in src/lib/fares.ts. No /api/estimates endpoint is needed and
+  // no third-party developer credentials are involved.
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
@@ -422,15 +586,37 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
+    app.use(
+      express.static(distPath, {
+        // Vite hashes asset filenames, so /assets/* can be cached forever.
+        setHeaders: (res, filePath) => {
+          if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+            res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          }
+        },
+      }),
+    );
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
 
+  // Centralized error handler — never leak stack traces. Logs internally,
+  // returns a stable shape. Must be registered LAST.
+  app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
+    logger.error({ err, url: req.originalUrl }, "unhandled");
+    if (process.env.SENTRY_DSN) Sentry.captureException(err);
+    if (res.headersSent) return;
+    res.status(500).json({ error: "internal" });
+  });
+
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Rumbo Server running on http://localhost:${PORT}`);
+    logger.info({ port: PORT }, "Rumbo server listening");
   });
 }
 
-startServer();
+startServer().catch((e) => {
+  logger.error({ err: e }, "fatal startup error");
+  if (process.env.SENTRY_DSN) Sentry.captureException(e);
+  process.exit(1);
+});
