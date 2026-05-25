@@ -6,7 +6,12 @@
 #     means the CORS allowlist only needs the public domain)
 #   - a 1 GB persistent disk for the GTFS SQLite cache so the feed
 #     survives deploys
-#   - a weekly cron that re-runs `npm run gtfs:ingest` against the same disk
+#
+# GTFS refresh: Render cron jobs can't mount disks, so the weekly refresh
+# is run manually for now via the web service's Shell:
+#     npm run gtfs:ingest
+# Post-launch task: schedule this from inside server.ts using a
+# setInterval / node-cron so it runs weekly without manual intervention.
 #
 # After connecting your GitHub repo to Render, all variables marked
 # `sync: false` must be pasted in the Render dashboard manually (they
@@ -49,29 +54,4 @@ services:
       - key: VITE_SENTRY_DSN
         sync: false
       - key: VITE_RECAPTCHA_SITE_KEY
-        sync: false
-
-  - type: cron
-    name: rumbo-gtfs-refresh
-    runtime: node
-    plan: starter
-    region: oregon
-    rootDir: rumbo
-    branch: main
-    # Mondays 04:00 America/Santiago — DTPM usually publishes the new
-    # vigente feed on weekends. UTC is -3 from Santiago in standard time
-    # so 07:00 UTC ≈ 04:00 local most of the year.
-    schedule: "0 7 * * 1"
-    buildCommand: npm ci
-    startCommand: npm run gtfs:ingest
-    disk:
-      name: rumbo-data
-      mountPath: /opt/render/project/src/rumbo/data
-      sizeGB: 1
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: GTFS_DB_PATH
-        value: /opt/render/project/src/rumbo/data/gtfs.db
-      - key: SENTRY_DSN
         sync: false
