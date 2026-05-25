@@ -1,0 +1,49 @@
+# Fly.io config for Rumbo.
+#
+# Region: scl (Santiago) — lowest latency for the target user base.
+# Machine: shared-cpu-1x / 512 MB — fits Fly's free allowance ($5/mo).
+# Volume: 1 GB persistent volume mounted at /data for the GTFS SQLite cache.
+# Cold starts: auto-stops when idle to save allowance, ~3-5 sec wake on
+# the next request. To eliminate cold starts, set min_machines_running = 1
+# (you'll start being charged ~$2/mo).
+#
+# Deploy: `fly deploy` from /Users/sebastianlaborde/Documents/GitHub/ACE/Rumbo/rumbo/
+
+app = "rumbo"
+primary_region = "scl"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+  ROUTING_PROVIDER = "graphhopper"
+  TRANSIT_PROVIDER = "gtfs"
+  GTFS_DB_PATH = "/data/gtfs.db"
+  # Updated to the real Fly URL after first deploy (see runbook step 4).
+  CORS_ALLOWED_ORIGINS = "https://rumbo.fly.dev"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "30s"
+    interval = "30s"
+    timeout = "5s"
+    method = "GET"
+    path = "/health"
+
+[mounts]
+  source = "rumbo_data"
+  destination = "/data"
+  initial_size = "1gb"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
