@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import {
   LatLng,
   RouteResult,
@@ -8,6 +9,40 @@ import {
 } from "./provider";
 
 const BASE = "https://graphhopper.com/api/1/route";
+
+// GraphHopper status codes that mean "quota / billing wall hit", not
+// "your request was malformed". 429 = rate-limit / day limit, 402 =
+// payment required (some accounts get this when over free tier), 403
+// = forbidden (used when the key has been throttled).
+const QUOTA_STATUS_CODES = new Set([402, 403, 429]);
+
+// In-process dedup so a burst of /api/route-all (3 GH calls each) doesn't
+// fire 30 Sentry events. One event per hour is plenty to wake you up.
+let lastQuotaAlertAt = 0;
+const QUOTA_ALERT_DEDUP_MS = 60 * 60 * 1000;
+
+function emitQuotaAlert(status: number, message: string, profile: RoutingProfile) {
+  if (!process.env.SENTRY_DSN) return;
+  const now = Date.now();
+  if (now - lastQuotaAlertAt < QUOTA_ALERT_DEDUP_MS) return;
+  lastQuotaAlertAt = now;
+
+  Sentry.withScope((scope) => {
+    scope.setLevel("error");
+    scope.setTag("provider", "graphhopper");
+    scope.setTag("quota_exceeded", "true");
+    scope.setTag("profile", profile);
+    scope.setContext("graphhopper", { status, upstream_message: message });
+    // Fixed fingerprint so all quota events group into ONE Sentry issue —
+    // makes the alert rule simple ("notify on this issue") and prevents
+    // inbox spam after the daily reset.
+    scope.setFingerprint(["graphhopper", "quota-exceeded"]);
+    Sentry.captureMessage(
+      `GraphHopper quota wall hit (HTTP ${status}). Routing for ${profile} is failing for live users until the daily reset.`,
+      "error",
+    );
+  });
+}
 
 interface GraphHopperPath {
   distance: number;
@@ -79,12 +114,19 @@ export class GraphHopperProvider implements RoutingProvider {
     const res = await fetch(url, { signal: AbortSignal.timeout(25_000) });
 
     if (!res.ok) {
+      let upstreamMsg = "";
       let msg = `GraphHopper ${res.status}`;
       try {
         const body = (await res.json()) as { message?: string };
-        if (body?.message) msg = `GraphHopper: ${body.message}`;
+        if (body?.message) {
+          upstreamMsg = body.message;
+          msg = `GraphHopper: ${body.message}`;
+        }
       } catch {
         // ignore
+      }
+      if (QUOTA_STATUS_CODES.has(res.status)) {
+        emitQuotaAlert(res.status, upstreamMsg, profile);
       }
       throw new RoutingError(msg, res.status === 401 ? 500 : 502);
     }
