@@ -194,7 +194,7 @@ export default function SignIn() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6 font-sans">
       <div className="max-w-md w-full text-center">
-        <div className="w-24 h-24 mx-auto mb-8 animate-bounce-slow rounded-[2.5rem] overflow-hidden shadow-2xl">
+        <div className="w-40 h-40 mx-auto mb-8 animate-bounce-slow rounded-3xl overflow-hidden shadow-2xl">
           <img src="/logo.png" alt="Rumbo Logo" className="w-full h-full object-cover" />
         </div>
 
