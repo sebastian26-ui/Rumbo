@@ -28,6 +28,7 @@ import { getTransitProvider, TransitError } from "./server/transit";
 import { getStopArrivals, isValidStopCode } from "./server/transit/redcl";
 import { logger } from "./server/logger";
 import { gtfsDbPath } from "./server/gtfs/db";
+import { startGtfsScheduler } from "./server/gtfs/scheduler";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -612,6 +613,12 @@ async function startServer() {
 
   app.listen(PORT, "0.0.0.0", () => {
     logger.info({ port: PORT }, "Rumbo server listening");
+    // Logs a WARNING if the GTFS DB is missing, and kicks off a background
+    // refresh when stale (>7 days) or absent. Runs only the transit provider
+    // is gtfs (the default in production).
+    if ((process.env.TRANSIT_PROVIDER || "gtfs") === "gtfs") {
+      startGtfsScheduler();
+    }
   });
 }
 

@@ -1,7 +1,9 @@
 # Fly.io config for Rumbo.
 #
 # Region: scl (Santiago) — lowest latency for the target user base.
-# Machine: shared-cpu-1x / 512 MB — fits Fly's free allowance ($5/mo).
+# Machine: shared-cpu-1x / 1024 MB — the weekly GTFS ingest (1M+ stop_times
+# rows + in-memory zip extraction) OOM'd at 512 MB. 1 GB still fits inside
+# Fly's free allowance.
 # Volume: 1 GB persistent volume mounted at /data for the GTFS SQLite cache.
 # Cold starts: auto-stops when idle to save allowance, ~3-5 sec wake on
 # the next request. To eliminate cold starts, set min_machines_running = 1
@@ -46,4 +48,4 @@ primary_region = "gru"
 
 [[vm]]
   size = "shared-cpu-1x"
-  memory = "512mb"
+  memory = "1024mb"
