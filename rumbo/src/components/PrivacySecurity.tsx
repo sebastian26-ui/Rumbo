@@ -18,8 +18,8 @@ interface Props {
  * Static "Privacy & Security" page.
  *
  * Every claim here describes something that is *actually true* of the current
- * Rumbo stack (Firebase Auth + Firestore + Vercel + client-side deep-link
- * handoff to providers). If you change the stack — for example wiring a new
+ * Rumbo stack (Firebase Auth + Firestore + Fly.io hosting + client-side
+ * deep-link handoff to providers). If you change the stack — for example wiring a new
  * provider, or starting to send data to a backend you didn't before — update
  * this page in the same PR. Don't make claims here that the code can't back.
  */
@@ -53,7 +53,7 @@ export default function PrivacySecurity({ onBack }: Props) {
           title="HTTPS everywhere"
           accent="emerald"
         >
-          Rumbo is served exclusively over HTTPS (TLS) by Vercel. Your browser
+          Rumbo is served exclusively over HTTPS (TLS). Your browser
           encrypts every request to the app — search queries, routes, and
           authentication tokens — in transit. We don't operate a plaintext
           HTTP endpoint.
@@ -90,9 +90,8 @@ export default function PrivacySecurity({ onBack }: Props) {
           accent="rose"
         >
           We don't sell your data. We don't run third-party ad trackers.
-          We don't share your trip history with anyone. Vercel Analytics
-          collects aggregate, anonymous page-view counts (no cookies, no
-          fingerprinting) so we can see whether the app is being used.
+          We don't share your trip history with anyone. We don't collect
+          analytics, page views, or any behavioral signals.
         </Card>
 
         <Card
@@ -169,7 +168,7 @@ export default function PrivacySecurity({ onBack }: Props) {
             run a SIEM or a WAF, so we can't truthfully show you a
             real-time "threats blocked" counter — anything like that would
             be theater. What we <em>can</em> tell you is exactly which
-            services touch your data (Firebase, Vercel, the providers you
+            services touch your data (Firebase, Fly.io hosting, the providers you
             tap) and exactly what we send to them. That's this page.
           </p>
           <p className="text-sm text-gray-200 leading-relaxed mt-3">

@@ -22,7 +22,6 @@ function Spinner() {
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isGuest, setIsGuest] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   // emailVerified is captured as state so VerifyEmail can flip it without
@@ -44,7 +43,7 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       // Password users must verify; Google sign-in users are pre-verified
-      // and arrive with emailVerified === true. Guest mode bypasses this.
+      // and arrive with emailVerified === true.
       const passwordUser =
         currentUser?.providerData?.[0]?.providerId === 'password';
       setEmailVerified(
@@ -101,12 +100,8 @@ export default function App() {
     return <Spinner />;
   }
 
-  if (!user && !isGuest) {
-    return (
-      <>
-        <SignIn onGuestAccess={() => setIsGuest(true)} />
-      </>
-    );
+  if (!user) {
+    return <SignIn />;
   }
 
   if (user && !emailVerified) {

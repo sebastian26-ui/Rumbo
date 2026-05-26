@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { signInWithGoogle, signUpWithEmail, signInWithEmail } from '../firebase';
-import { LogIn, Navigation, ArrowLeft } from 'lucide-react';
+import { LogIn, ArrowLeft } from 'lucide-react';
 import disposableDomains from 'disposable-email-domains';
 
 const DISPOSABLE = new Set<string>(disposableDomains as string[]);
@@ -11,13 +11,14 @@ function isDisposableEmail(email: string): boolean {
   return DISPOSABLE.has(email.slice(at + 1).toLowerCase());
 }
 
-interface SignInProps {
-  onGuestAccess: () => void;
-}
+// Rumbo brand palette pulled from the logo.
+const BRAND_BG = '#8DAEBD';
+const BRAND_DARK = '#202F47';
+const BRAND_HOVER = '#7A9DAD';
 
 type View = 'landing' | 'signup' | 'signin';
 
-export default function SignIn({ onGuestAccess }: SignInProps) {
+export default function SignIn() {
   const [view, setView] = useState<View>('landing');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -74,7 +75,10 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
             <ArrowLeft size={18} /> Back
           </button>
 
-          <h1 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">
+          <h1
+            className="text-3xl font-black mb-2 tracking-tight"
+            style={{ color: BRAND_DARK }}
+          >
             {isSignUp ? 'Create your account' : 'Welcome back'}
           </h1>
           <p className="text-gray-500 mb-8 font-medium">
@@ -93,7 +97,10 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Your full name"
-                    className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none font-medium"
+                    style={{ borderColor: 'transparent' }}
+                    onFocus={(e) => (e.currentTarget.style.borderColor = BRAND_BG)}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = '')}
+                    className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none font-medium"
                     autoComplete="name"
                   />
                 </div>
@@ -104,7 +111,9 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="Santiago"
-                    className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none font-medium"
+                    onFocus={(e) => (e.currentTarget.style.borderColor = BRAND_BG)}
+                    onBlur={(e) => (e.currentTarget.style.borderColor = '')}
+                    className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none font-medium"
                   />
                 </div>
               </>
@@ -116,7 +125,9 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none font-medium"
+                onFocus={(e) => (e.currentTarget.style.borderColor = BRAND_BG)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = '')}
+                className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none font-medium"
                 autoComplete="email"
               />
             </div>
@@ -127,7 +138,9 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 8 characters"
-                className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none font-medium"
+                onFocus={(e) => (e.currentTarget.style.borderColor = BRAND_BG)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = '')}
+                className="w-full mt-1 px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none font-medium"
                 autoComplete={isSignUp ? 'new-password' : 'current-password'}
               />
             </div>
@@ -141,7 +154,10 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-4 px-6 bg-blue-600 text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:bg-blue-700 transition-all active:scale-95 shadow-xl shadow-blue-200 disabled:opacity-60"
+              style={{ backgroundColor: BRAND_BG }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = BRAND_HOVER)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BRAND_BG)}
+              className="w-full py-4 px-6 text-white font-bold rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl disabled:opacity-60"
             >
               {submitting ? 'Please wait…' : isSignUp ? 'Create account' : 'Sign in'}
             </button>
@@ -150,11 +166,23 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
           <div className="mt-6 text-center text-sm text-gray-500 font-medium">
             {isSignUp ? (
               <>Already have an account?{' '}
-                <button onClick={() => { setView('signin'); setError(null); }} className="text-blue-600 font-bold">Sign in</button>
+                <button
+                  onClick={() => { setView('signin'); setError(null); }}
+                  style={{ color: BRAND_DARK }}
+                  className="font-bold hover:underline"
+                >
+                  Sign in
+                </button>
               </>
             ) : (
               <>New to Rumbo?{' '}
-                <button onClick={() => { setView('signup'); setError(null); }} className="text-blue-600 font-bold">Create an account</button>
+                <button
+                  onClick={() => { setView('signup'); setError(null); }}
+                  style={{ color: BRAND_DARK }}
+                  className="font-bold hover:underline"
+                >
+                  Create an account
+                </button>
               </>
             )}
           </div>
@@ -166,54 +194,54 @@ export default function SignIn({ onGuestAccess }: SignInProps) {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6 font-sans">
       <div className="max-w-md w-full text-center">
-        <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-blue-200 animate-bounce-slow">
-          <Navigation size={40} className="text-white" />
+        <div className="w-24 h-24 mx-auto mb-8 animate-bounce-slow rounded-[2.5rem] overflow-hidden shadow-2xl">
+          <img src="/logo.png" alt="Rumbo Logo" className="w-full h-full object-cover" />
         </div>
 
-        <h1 className="text-4xl font-black text-gray-900 mb-3 tracking-tight">Rumbo</h1>
+        <h1
+          className="text-4xl font-black mb-3 tracking-tight"
+          style={{ color: BRAND_DARK }}
+        >
+          Rumbo
+        </h1>
         <p className="text-gray-500 text-lg mb-12 font-medium">Smart mobility for your city</p>
 
         <div className="space-y-3">
           <button
             onClick={() => setView('signup')}
-            className="w-full py-4 px-6 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all active:scale-95 shadow-xl shadow-blue-200"
+            style={{ backgroundColor: BRAND_BG }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = BRAND_HOVER)}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BRAND_BG)}
+            className="w-full py-4 px-6 text-white font-bold rounded-2xl transition-all active:scale-95 shadow-xl"
           >
             Create an account
           </button>
           <button
             onClick={() => setView('signin')}
-            className="w-full py-4 px-6 bg-white text-gray-900 font-bold rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95"
+            style={{ color: BRAND_DARK }}
+            className="w-full py-4 px-6 bg-white font-bold rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all active:scale-95"
           >
             I already have an account
           </button>
           <button
             onClick={() => signInWithGoogle()}
-            className="w-full py-4 px-6 bg-gray-900 text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:bg-gray-800 transition-all active:scale-95 shadow-xl"
+            style={{ backgroundColor: BRAND_DARK }}
+            className="w-full py-4 px-6 text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:opacity-90 transition-all active:scale-95 shadow-xl"
           >
             <LogIn size={20} />
             Continue with Google
-          </button>
-
-          <button
-            onClick={onGuestAccess}
-            className="w-full py-4 px-6 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all active:scale-95"
-          >
-            Try as Guest
           </button>
         </div>
 
         <div className="mt-16 pt-8 border-t border-gray-100">
           <div className="flex justify-center gap-8">
             <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">12k+</div>
-              <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Users</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">4.9</div>
-              <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Rating</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">100%</div>
+              <div
+                className="text-xl font-bold"
+                style={{ color: BRAND_DARK }}
+              >
+                100%
+              </div>
               <div className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Eco</div>
             </div>
           </div>
