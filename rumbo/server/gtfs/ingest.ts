@@ -26,7 +26,6 @@ if (process.env.SENTRY_DSN) {
 
 import fs from "node:fs";
 import path from "node:path";
-import os from "node:os";
 import AdmZip from "adm-zip";
 import Database from "better-sqlite3";
 import { streamCsv } from "./csv";
@@ -464,9 +463,14 @@ async function main() {
   const resolvedFeedDir = findFeedDir(feedDir);
   console.log(`[gtfs] feed root: ${resolvedFeedDir}`);
 
+  // Build the new DB next to the destination so the final swap is an
+  // atomic intra-filesystem rename. Building under os.tmpdir() breaks on
+  // Fly, where /tmp is a tmpfs and /data is a mounted volume — renameSync
+  // fails with EXDEV across filesystems.
+  fs.mkdirSync(path.dirname(opts.dbPath), { recursive: true });
   const tmpDbPath = path.join(
-    os.tmpdir(),
-    `rumbo-gtfs-${Date.now()}-${process.pid}.db`,
+    path.dirname(opts.dbPath),
+    `.${path.basename(opts.dbPath)}.tmp-${Date.now()}-${process.pid}`,
   );
   const db = new Database(tmpDbPath);
   db.pragma("journal_mode = WAL");
@@ -500,7 +504,6 @@ async function main() {
 
   db.close();
 
-  fs.mkdirSync(path.dirname(opts.dbPath), { recursive: true });
   for (const suffix of ["", "-wal", "-shm"]) {
     const src = `${tmpDbPath}${suffix}`;
     const dst = `${opts.dbPath}${suffix}`;
