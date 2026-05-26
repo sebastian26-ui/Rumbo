@@ -19,6 +19,23 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
+# VITE_* values are inlined into the browser bundle at build time. They
+# must be available BEFORE `npm run build`, so we accept them as build
+# args (Fly runtime secrets don't reach the Docker build context).
+#
+# Deploy with:
+#   fly deploy --no-cache \
+#     --build-arg VITE_RECAPTCHA_SITE_KEY=<reCAPTCHA-Enterprise-site-key> \
+#     --build-arg VITE_SENTRY_DSN=<sentry-react-dsn>
+#
+# These keys are designed to ship in the public bundle (reCAPTCHA site
+# keys and Sentry DSNs are PUBLIC identifiers — security comes from the
+# domain allowlist on each, not from hiding the key).
+ARG VITE_RECAPTCHA_SITE_KEY=""
+ARG VITE_SENTRY_DSN=""
+ENV VITE_RECAPTCHA_SITE_KEY=$VITE_RECAPTCHA_SITE_KEY
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN
+
 # Copy the rest of the source and build the SPA
 COPY . .
 RUN npm run build
