@@ -195,13 +195,18 @@ export default function SignIn() {
     <div className="min-h-screen bg-white flex items-center justify-center p-6 font-sans">
       <div className="max-w-md w-full text-center">
         <div
-          className="w-40 h-40 mx-auto mb-8 animate-bounce-slow rounded-3xl overflow-hidden"
+          className="w-40 h-40 mx-auto mb-8 animate-bounce-slow rounded-[2rem] overflow-hidden"
           style={{
             boxShadow:
-              '0 25px 50px -12px rgba(32, 47, 71, 0.45), 0 10px 20px -8px rgba(32, 47, 71, 0.25), inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 2px rgba(0,0,0,0.08)',
+              '0 20px 40px -12px rgba(32, 47, 71, 0.25), 0 8px 16px -8px rgba(32, 47, 71, 0.15)',
           }}
         >
-          <img src="/logo.png" alt="Rumbo Logo" className="w-full h-full object-cover" />
+          <img
+            src="/logo.png"
+            alt="Rumbo Logo"
+            className="w-full h-full object-cover"
+            style={{ filter: 'brightness(1.12) saturate(1.08)' }}
+          />
         </div>
 
         <h1
