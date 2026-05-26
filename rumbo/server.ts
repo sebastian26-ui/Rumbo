@@ -29,6 +29,7 @@ import { getStopArrivals, isValidStopCode } from "./server/transit/redcl";
 import { logger } from "./server/logger";
 import { gtfsDbPath } from "./server/gtfs/db";
 import { startGtfsScheduler } from "./server/gtfs/scheduler";
+import { requireFirebaseAuth } from "./server/auth";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -170,6 +171,12 @@ async function startServer() {
     }
     res.json({ ok: true, gtfsAgeDays });
   });
+
+  // Everything under /api/* requires a valid Firebase ID token. Mounted
+  // BEFORE the per-route limiters so unauthenticated traffic returns 401
+  // immediately without consuming GraphHopper/Nominatim/red.cl budget.
+  // /health stays open above so Fly's healthcheck can hit it.
+  app.use("/api", requireFirebaseAuth());
 
   app.post("/api/autocomplete", autocompleteLimiter, async (req, res) => {
     const q = typeof req.body?.q === "string" ? req.body.q.trim() : "";

@@ -9,6 +9,7 @@ import {
   newFavoriteId,
   saveFavorites,
 } from '../lib/favorites';
+import { apiFetch } from '../lib/api';
 
 interface Props {
   open: boolean;
@@ -350,7 +351,7 @@ function AddFavorite({ mapCenter, onCancel, onAdd }: AddFavoriteProps) {
     setLoading(true);
     const handle = setTimeout(async () => {
       try {
-        const r = await fetch('/api/autocomplete', {
+        const r = await apiFetch('/api/autocomplete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ q, lat: mapCenter[0], lng: mapCenter[1] }),

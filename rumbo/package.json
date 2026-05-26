@@ -34,6 +34,7 @@
     "firebase": "^12.11.0",
     "google-maps-react-markers": "^2.0.15",
     "helmet": "^8.2.0",
+    "jose": "^6.2.3",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",

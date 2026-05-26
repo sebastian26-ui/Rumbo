@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { apiFetch } from './api';
 
 /**
  * Live bus arrival client for the Rumbo frontend. Talks to /api/realtime/arrivals,
@@ -95,7 +96,7 @@ export function useLiveArrival(
         const url = `/api/realtime/arrivals?stop=${encodeURIComponent(
           stopCode!,
         )}&route=${encodeURIComponent(service!)}`;
-        const r = await fetch(url, { headers: { Accept: 'application/json' } });
+        const r = await apiFetch(url, { headers: { Accept: 'application/json' } });
         if (cancelled || requestKeyRef.current !== key) return;
         if (!r.ok) {
           setState((s) => ({ ...s, status: 'unavailable' }));

@@ -23,6 +23,7 @@ import {
 import { estimateFare } from '../lib/fares';
 import { ProviderEstimate } from '../types';
 import { loadEnabledProviders, saveEnabledProviders } from '../lib/userPrefs';
+import { apiFetch } from '../lib/api';
 import { FavoritePlace, loadFavorites } from '../lib/favorites';
 import ProvidersPanel from './ProvidersPanel';
 import ProfilePanel from './ProfilePanel';
@@ -271,7 +272,7 @@ export default function MapView({ user }: MapViewProps) {
     lastRevGeoRef.current = [lat, lng];
     (async () => {
       try {
-        const r = await fetch('/api/reverse-geocode', {
+        const r = await apiFetch('/api/reverse-geocode', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat, lng }),
@@ -552,7 +553,7 @@ export default function MapView({ user }: MapViewProps) {
         let label = presetLabel;
 
         if (!coords) {
-          const gc = await fetch('/api/geocode', {
+          const gc = await apiFetch('/api/geocode', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ q: destText }),
@@ -574,7 +575,7 @@ export default function MapView({ user }: MapViewProps) {
         } else if (originCoords) {
           originLatLng = originCoords;
         } else if (originText.trim()) {
-          const gcO = await fetch('/api/geocode', {
+          const gcO = await apiFetch('/api/geocode', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ q: originText.trim() }),
@@ -592,7 +593,7 @@ export default function MapView({ user }: MapViewProps) {
         const destination = { lat: coords[0], lng: coords[1] };
 
         if (mode === 'all') {
-          const allRes = await fetch('/api/route-all', {
+          const allRes = await apiFetch('/api/route-all', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ origin, destination }),
@@ -607,7 +608,7 @@ export default function MapView({ user }: MapViewProps) {
         }
 
         if (mode === 'transit') {
-          const transitRes = await fetch('/api/transit-route', {
+          const transitRes = await apiFetch('/api/transit-route', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ origin, destination }),
@@ -628,7 +629,7 @@ export default function MapView({ user }: MapViewProps) {
         const profile = modeToRoutingProfile(mode);
         if (!profile) throw new Error(`Unsupported mode: ${mode}`);
 
-        const routeRes = await fetch('/api/route', {
+        const routeRes = await apiFetch('/api/route', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -689,7 +690,7 @@ export default function MapView({ user }: MapViewProps) {
 
     const handle = setTimeout(async () => {
       try {
-        const r = await fetch('/api/autocomplete', {
+        const r = await apiFetch('/api/autocomplete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
