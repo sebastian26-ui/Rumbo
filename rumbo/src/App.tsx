@@ -1,6 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { Analytics } from '@vercel/analytics/react';
 import { auth } from './firebase';
 import SignIn from './components/SignIn';
 import MapView from './components/MapView';
@@ -85,7 +84,6 @@ export default function App() {
         <Suspense fallback={<Spinner />}>
           <PrivacySecurity onBack={() => { window.location.hash = ''; }} />
         </Suspense>
-        <Analytics />
       </>
     );
   }
@@ -95,7 +93,6 @@ export default function App() {
         <Suspense fallback={<Spinner />}>
           <TermsOfService onBack={() => { window.location.hash = ''; }} />
         </Suspense>
-        <Analytics />
       </>
     );
   }
@@ -108,7 +105,6 @@ export default function App() {
     return (
       <>
         <SignIn onGuestAccess={() => setIsGuest(true)} />
-        <Analytics />
       </>
     );
   }
@@ -119,7 +115,6 @@ export default function App() {
         <Suspense fallback={<Spinner />}>
           <VerifyEmail user={user} onVerified={() => setEmailVerified(true)} />
         </Suspense>
-        <Analytics />
       </>
     );
   }
@@ -133,7 +128,6 @@ export default function App() {
             onComplete={() => setNeedsOnboarding(false)}
           />
         </Suspense>
-        <Analytics />
       </>
     );
   }
@@ -142,7 +136,6 @@ export default function App() {
     <>
       <MapView user={user} />
       <InstallButton />
-      <Analytics />
     </>
   );
 }

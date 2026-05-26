@@ -10,7 +10,7 @@
 # Deploy: `fly deploy` from /Users/sebastianlaborde/Documents/GitHub/ACE/Rumbo/rumbo/
 
 app = "rumbo"
-primary_region = "scl"
+primary_region = "gru"
 
 [build]
   dockerfile = "Dockerfile"

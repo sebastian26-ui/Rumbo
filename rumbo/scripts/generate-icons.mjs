@@ -1,48 +1,63 @@
-// Generate PNG icons for the PWA manifest + iOS apple-touch-icon from a
-// solid SVG. Runs at build time (also OK to run manually). We use the
-// built-in canvas via the `sharp`-free approach below: render the SVG to a
-// raster by constructing a minimal PPM and converting it with `node:zlib`
-// is overkill — instead, we just embed the SVG into a fixed-size PNG via
-// a tiny base64 PNG that is valid for all required sizes. Each icon is a
-// solid #0F172A square with a "R" wordmark drawn by rendering the SVG to
-// a canvas using the `canvas` package — BUT to avoid an extra native dep,
-// we ship pre-rendered base64 PNGs as the v1 placeholder.
+// Generate PWA icons (PNG) at the sizes the manifest declares. Runs at
+// build time and any time you want to refresh the icons locally:
 //
-// Replace these with brand assets pre-launch by running pwa-asset-generator
-// against a real logo: see Rumbo deploy runbook step 5.
+//   npm run icons:gen
+//
+// Output: public/icons/{icon-192,icon-512,icon-512-maskable,apple-touch-icon-180}.png
+//
+// These are intentionally simple — solid Rumbo brand color (#0F172A) with
+// no glyph — so they're guaranteed to be the right pixel dimensions
+// (PWA install criteria require exact 192/512). When you have a real
+// brand asset, swap them out using pwa-asset-generator against a logo.
 
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { PNG } from "pngjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const ICONS_DIR = path.join(ROOT, "public", "icons");
-
 fs.mkdirSync(ICONS_DIR, { recursive: true });
 
-// 1x1 #0F172A pixel PNG (base64). When the manifest icon size is declared,
-// browsers accept any actual pixel dimensions — the declared size is what
-// they show in the install UI. This is a temporary placeholder that lets
-// the PWA install flow validate; replace with proper brand icons before
-// launch.
-const PIXEL = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-  "base64",
-);
+// Rumbo brand: navy background, mint accent dot.
+const BG = { r: 0x0f, g: 0x17, b: 0x22, a: 0xff };
+const FG = { r: 0x00, g: 0xc8, b: 0x96, a: 0xff };
 
-const targets = [
-  "icon-192.png",
-  "icon-512.png",
-  "icon-512-maskable.png",
-  "apple-touch-icon-180.png",
-];
+function writePng(name, size, options = {}) {
+  const { maskablePadding = 0 } = options;
+  const png = new PNG({ width: size, height: size });
 
-for (const name of targets) {
-  fs.writeFileSync(path.join(ICONS_DIR, name), PIXEL);
+  // Center-aligned circle for the brand mark. Maskable variant adds a
+  // safe-zone padding so it doesn't get clipped by Android's icon mask.
+  const safeRadius = Math.floor((size / 2) * (1 - maskablePadding * 0.2));
+  const innerRadius = Math.floor(safeRadius * 0.35);
+  const cx = size / 2;
+  const cy = size / 2;
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const idx = (size * y + x) << 2;
+      const dx = x - cx;
+      const dy = y - cy;
+      const inMark = dx * dx + dy * dy < innerRadius * innerRadius;
+      const c = inMark ? FG : BG;
+      png.data[idx] = c.r;
+      png.data[idx + 1] = c.g;
+      png.data[idx + 2] = c.b;
+      png.data[idx + 3] = c.a;
+    }
+  }
+
+  const out = path.join(ICONS_DIR, name);
+  const buf = PNG.sync.write(png);
+  fs.writeFileSync(out, buf);
+  console.log(`  wrote ${name} (${size}x${size}, ${buf.length} bytes)`);
 }
 
-console.log(`Wrote ${targets.length} placeholder icons to ${ICONS_DIR}`);
-console.log(
-  "Replace with brand assets before launch: see Rumbo deploy runbook section 5.",
-);
+console.log(`Generating PWA icons in ${ICONS_DIR}`);
+writePng("icon-192.png", 192);
+writePng("icon-512.png", 512);
+writePng("icon-512-maskable.png", 512, { maskablePadding: 1 });
+writePng("apple-touch-icon-180.png", 180);
+console.log("Done.");
