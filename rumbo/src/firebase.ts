@@ -6,8 +6,8 @@ import {
   signOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  sendEmailVerification,
   updateProfile,
+  type User,
 } from 'firebase/auth';
 import { getFirestore, doc, deleteDoc } from 'firebase/firestore';
 import {
@@ -49,6 +49,24 @@ export const signInWithGoogle = async () => {
   }
 };
 
+// Verification mail is sent by our Express backend (Resend + branded
+// template + server-generated Firebase action link). The client's only
+// job is to POST to /api/auth/send-verification with the fresh ID token.
+async function requestVerificationEmail(user: User): Promise<void> {
+  const idToken = await user.getIdToken(false);
+  const r = await fetch('/api/auth/send-verification', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    throw new Error(body?.error || `Verification email request failed (${r.status})`);
+  }
+}
+
 export const signUpWithEmail = async (email: string, password: string, name: string) => {
   const result = await createUserWithEmailAndPassword(auth, email, password);
   if (name) {
@@ -57,11 +75,6 @@ export const signUpWithEmail = async (email: string, password: string, name: str
     } catch (e) {
       console.warn('updateProfile failed', e);
     }
-  }
-  try {
-    await sendEmailVerification(result.user);
-  } catch (e) {
-    console.warn('sendEmailVerification failed', e);
   }
   return result.user;
 };
@@ -73,7 +86,7 @@ export const signInWithEmail = async (email: string, password: string) => {
 
 export const resendEmailVerification = async () => {
   if (!auth.currentUser) throw new Error('Not signed in');
-  await sendEmailVerification(auth.currentUser);
+  await requestVerificationEmail(auth.currentUser);
 };
 
 /**

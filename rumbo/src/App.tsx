@@ -9,7 +9,6 @@ import { loadUserProfile } from './lib/userPrefs';
 const Onboarding = lazy(() => import('./components/Onboarding'));
 const PrivacySecurity = lazy(() => import('./components/PrivacySecurity'));
 const TermsOfService = lazy(() => import('./components/TermsOfService'));
-const VerifyEmail = lazy(() => import('./components/VerifyEmail'));
 
 function Spinner() {
   return (
@@ -24,9 +23,6 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
-  // emailVerified is captured as state so VerifyEmail can flip it without
-  // forcing a full reload.
-  const [emailVerified, setEmailVerified] = useState(true);
   // Hash route for the static legal pages. Keeps the URL shareable
   // (#privacy, #terms) without pulling in a full router for two pages.
   const [hash, setHash] = useState(() =>
@@ -42,22 +38,15 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      // Password users must verify; Google sign-in users are pre-verified
-      // and arrive with emailVerified === true.
-      const passwordUser =
-        currentUser?.providerData?.[0]?.providerId === 'password';
-      setEmailVerified(
-        !currentUser || !passwordUser || currentUser.emailVerified,
-      );
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // Whenever a verified user signs in, check whether they've completed onboarding.
+  // Whenever a user signs in, check whether they've completed onboarding.
   useEffect(() => {
-    if (!user || !emailVerified) {
+    if (!user) {
       setNeedsOnboarding(false);
       return;
     }
@@ -74,7 +63,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [user, emailVerified]);
+  }, [user]);
 
   // Static legal pages — reachable from any auth state, including signed-out.
   if (hash === '#privacy' || hash === '#privacy-security') {
@@ -96,22 +85,12 @@ export default function App() {
     );
   }
 
-  if (loading || (user && emailVerified && profileLoading)) {
+  if (loading || (user && profileLoading)) {
     return <Spinner />;
   }
 
   if (!user) {
     return <SignIn />;
-  }
-
-  if (user && !emailVerified) {
-    return (
-      <>
-        <Suspense fallback={<Spinner />}>
-          <VerifyEmail user={user} onVerified={() => setEmailVerified(true)} />
-        </Suspense>
-      </>
-    );
   }
 
   if (user && needsOnboarding) {
